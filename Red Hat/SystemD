@@ -1,0 +1,250 @@
+## Es el primer PID 
+
+Administra UNIDADES :
+
+	> Servicios
+	> Sockets
+	> Path
+
+
+systemctl list-units -t socket
+
+> Quien carga tal servicio (target)
+
+	[root@rhel8slave3 ~]# systemctl list-unit-files *ssh*
+	UNIT FILE             STATE
+	anaconda-sshd.service static
+	sshd-keygen@.service  disabled
+	sshd.service          enabled
+	sshd@.service         static
+	sssd-ssh.service      indirect
+	sshd.socket           disabled
+	sssd-ssh.socket       disabled
+	sshd-keygen.target    static
+
+	8 unit files listed.
+
+
+
+	[root@rhel8slave3 ~]# systemctl cat sshd.service
+	# /usr/lib/systemd/system/sshd.service
+	[Unit]
+	Description=OpenSSH server daemon
+	Documentation=man:sshd(8) man:sshd_config(5)
+	After=network.target sshd-keygen.target
+	Wants=sshd-keygen.target
+
+	[Service]
+	Type=notify
+	EnvironmentFile=-/etc/crypto-policies/back-ends/opensshserver.config
+	EnvironmentFile=-/etc/sysconfig/sshd
+	ExecStart=/usr/sbin/sshd -D $OPTIONS $CRYPTO_POLICY
+	ExecReload=/bin/kill -HUP $MAINPID
+	KillMode=process
+	Restart=on-failure
+	RestartSec=42s
+
+	[Install]
+	WantedBy=multi-user.target
+
+
+> Dependencias del servicio
+
+
+	[root@rhel8slave3 ~]# systemctl list-dependencies sshd.service
+	sshd.service
+	● ├─system.slice
+	● ├─sshd-keygen.target
+	● │ ├─sshd-keygen@ecdsa.service
+	● │ ├─sshd-keygen@ed25519.service
+	● │ └─sshd-keygen@rsa.service
+
+
+
+> Verificar estado
+
+	systemctl is-enabled nameservice
+
+> Ver unidades estado fallido
+
+	systemctl --failed -t service
+
+> Mejor ver estado habilitado o no
+
+	systemctl list-units-files
+
+
+#############################
+## Control de servicios #####
+#############################
+
+
+> reload de servicios
+
+	[root@rhel8slave3 ~]# systemctl status chronyd -l
+	● chronyd.service - NTP client/server
+	   Loaded: loaded (/usr/lib/systemd/system/chronyd.service; enabled; vendor pre>
+	   Active: active (running) since Thu 2020-07-16 16:41:27 -05; 5min ago
+	     Docs: man:chronyd(8)
+	           man:chrony.conf(5)
+	  Process: 923 ExecStartPost=/usr/libexec/chrony-helper update-daemon (code=exi>
+	  Process: 882 ExecStart=/usr/sbin/chronyd $OPTIONS (code=exited, status=0/SUCC>
+	 Main PID: 901 (chronyd)
+	    Tasks: 1 (limit: 17932)
+	   Memory: 1.9M
+	   CGroup: /system.slice/chronyd.service
+	           └─901 /usr/sbin/chronyd
+
+
+El proceso principal no cambia, sino el proceso de configuraciones.
+
+systemctl reload chronyd.service
+
+Este por ejemplo no permite recargar
+
+
+ > Restart de servicios
+
+ 	Mata el proceso principal
+
+
+
+> Dependencias de servicios
+
+
+	[root@rhel8slave3 ~]# systemctl list-dependencies sshd
+	sshd.service
+	● ├─system.slice
+	● ├─sshd-keygen.target
+	● │ ├─sshd-keygen@ecdsa.service
+	● │ ├─sshd-keygen@ed25519.service
+	● │ └─sshd-keygen@rsa.service
+	● └─sysinit.target
+	●   ├─dev-hugepages.mount
+	●   ├─dev-mqueue.mount
+	●   ├─dracut-shutdown.service
+	●   ├─import-state.service
+
+########################################
+##### Enmascaramiento de servicios #####
+########################################
+
+Evitar servicios que tienen conflictos entre si
+
+Ejm: firewalld e iptables
+
+
+	[root@rhel8slave3 ~]# systemctl status firewalld.service -l
+	● firewalld.service - firewalld - dynamic firewall daemon
+	   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor p>
+	   Active: active (running) since Thu 2020-07-16 16:41:35 -05; 19min ago
+	     Docs: man:firewalld(1)
+	 Main PID: 941 (firewalld)
+	    Tasks: 2 (limit: 17932)
+	   Memory: 31.4M
+	   CGroup: /system.slice/firewalld.service
+	           └─941 /usr/libexec/platform-python -s /usr/sbin/firewalld --nofork ->
+
+> Enmascarando 
+  Se crea enlace simbolico 
+
+	[root@rhel8slave3 ~]# systemctl mask firewalld.service
+	Created symlink /etc/systemd/system/firewalld.service → /dev/null.
+
+
+> Figura estado enmascarado
+
+
+	[root@rhel8slave3 ~]# systemctl status firewalld.service
+	● firewalld.service
+	   Loaded: masked (Reason: Unit firewalld.service is masked.)
+	   Active: active (running) since Thu 2020-07-16 16:41:35 -05; 20min ago
+	 Main PID: 941 (firewalld)
+	    Tasks: 2 (limit: 17932)
+	   Memory: 31.4M
+	   CGroup: /system.slice/firewalld.service
+
+
+	           └─941 /usr/libexec/platform-python -s /usr/sbin/firewalld --nofork ->
+> Ya no se puede iniciar
+
+[root@rhel8slave3 ~]# systemctl restart firewalld.service
+Failed to restart firewalld.service: Unit firewalld.service is masked.
+
+> Quitar enmascaramiento
+
+[root@rhel8slave3 ~]# systemctl unmask firewalld.service
+Removed /etc/systemd/system/firewalld.service.
+
+
+
+################################
+##### Target de un servcio #####
+################################
+
+
+Tipos de target:
+	- Graphical
+	- Multi-user
+	- Emergency
+	
+
+[root@rhel8slave3 ~]# systemctl list-dependencies graphical.target | grep targ
+
+
+> Cambiar de target
+
+systemctl isolate multi-user.target
+
+Reiniciara el equipo a modo consola
+
+
+> Ver quien es el default.target
+
+	[root@rhel8slave1 system]# pwd
+	/etc/systemd/system
+
+
+	[root@rhel8slave1 system]# systemctl get-default
+	multi-user.target
+
+> Setear target por default
+
+	[root@rhel8slave1 system]# systemctl set-default
+	basic.target                   printer.target
+	bluetooth.target               reboot.target
+	cryptsetup-pre.target          remote-cryptsetup.target
+	cryptsetup.target              remote-fs-pre.target
+
+
+
+> Elegir un target al bootear
+
+Aplastar "e" al bootear
+
+Editar la linea que inicia con "linux" al final agregar:
+
+systemd.unit=graphical.target
+
+Control+X para ejecutar
+
+
+
+#################
+### Romper ROOT##
+#################
+
+
+mount -o remount,rw /sysroot
+
+chroot /sysroot
+
+passwd root
+
+touch /.autorelabel
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+###############################################
+## Virtualizacion de plataformas en general ##
+###############################################
+
+Cisco UCS >> VMWARE  >> Hosts access mode.
+
+	-- Solarwinds (syslog)
+
+	Servicio de SEM o Syslog Event Manager para analizar eventos
+
+	-- Honeypot (5 VM)
+
+	Servicio de ansuelo para equipos de Core y testear ejemplos de ataques
+
+		-> Kfsensor (2)
+		Servidors Windows
+
+		-> Honeydrive (3)
+		Servidores Linux
+
+	-ISE
+
+

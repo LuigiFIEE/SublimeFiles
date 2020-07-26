@@ -1,0 +1,175 @@
+##################################
+### Revisar discos disponibles ###
+##################################
+
+
+lsblk
+
+> Agregando flags
+
+lsblk -lp //Veremos el FS y el path completo
+
+
+
+######################################
+#### Validar  el tipo de partición ###
+######################################
+
+
+parted /dev/sda print
+
+> Agregamos flag para especificar unidades
+
+parted /deV/sda unit MB print
+
+
+fdisk -l /dev/sda
+
+
+###########################
+### Crear particiones #####
+###########################
+
+> Usando parted 
+
+	// Definimos el tipo de arquictura (MBR o GPT)
+
+
+	parted /dev/sdb mklabel msdos
+
+
+	// Creando la partición en si
+
+	parted /dev/sdb
+
+	// Deep in this prompt
+
+	mkpart primary ext4 200MB 400MB
+
+
+> Usando fdisk (MBR) o gdisk (GPT)
+
+fdisk /dev/sdc
+
+// Al ingresar con fdisk ya se creará en DOS
+// Al ingresar con gdisk ya se creará en GPT
+
+
+// Creando la partición
+
+n
+// usamos los valores por defecto
+default
++200MB //Aqui agregamos lo que deseamos
+8300
+
+
+
+##############################
+#### Creando el filesystem ###
+##############################
+
+// Aqui usaremos mkfs
+
+	mkfs.ext4 /dev/sdb1 
+	mkfs.xfs /dev/sdc1
+
+
+###############################
+##### Montando particiones ####
+###############################
+
+
+mount /dev/sdb1 /mnt
+
+> Validando si es permanente
+
+	cat /etc/fstab
+
+
+// Aqui se puede agregar de 3 tipos de forma:
+
+
+-- UUID=kkñk			/mnt
+-- /dev/sdb1	/home
+-- LABEL=MioPS
+
+// La última forma se realiza la siguiente fora:
+
+> Creando un label para un FileSystem
+
+xfs_admin -L MioPS_xfs /dev/sdb2
+
+PD: Solo para tipos xfs
+
+// Flag "L" por Label
+
+
+
+// Finalmente luego de editar montamos todo
+
+mount -a
+
+###############################
+##### Creando memoria SWAP ####
+###############################
+
+
+> Creamos particion con gdisk o fdisk
+
+	Command (? for help): t
+	Partition number (1-3): 3
+	Current type is 'Linux filesystem'
+	Hex code or GUID (L to show codes, Enter = 8300): 8200
+
+> Creamos el tipo de FS
+
+	[root@rhel8slave3 mnt]# mkswap /dev/sdc3
+	Setting up swapspace version 1, size = 200 MiB (209711104 bytes)
+	no label, UUID=8257a18f-056a-44d7-983d-e86c15f9dec7
+
+> Editamos fstab
+
+	vi /etc/fstab
+	/dev/sdbc3 			swap 	swap defaults 0 0
+
+> Montamos las particiones swap
+
+	swapon -a
+
+> Validamos
+	
+	swapon -s
+
+	[root@rhel8slave3 ~]# swapon -s
+	Filename                                Type            Size    Used    Priority
+	/dev/sdc3                               partition       204796  0       -2
+	/dev/sdb3                               partition       195580  0       -3
+	/dev/dm-1                               partition       1048572 0       -4
+
+
+####################################
+###### Prioridades memoria SWAP ####
+#####################################
+
+> Editamos fstab
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

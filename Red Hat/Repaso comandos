@@ -1,0 +1,119 @@
+
+## Creación de repositorios
+
+>> Creando un archivo repo nuevo
+
+	cd /etc/yum.repos.d/
+
+	cat > MiPrueba.repo <<EOF
+	[Mi prueba]
+	name=Mi Prueba
+	baseurl= https://asajskalsjals || file:///mnt/
+	enable= 1
+	gpgcheck = 0
+	EOF
+
+
+	Directorio de keys
+
+	/etc/pki/rpm-gpg
+
+
+>> Utilizando yum-config-manager
+
+	Primero necesitamos dnf-utils
+
+	Luego instalamos, e instalamos gpgcheck=0
+
+	yum-config-manager --add-repo=http://rhel8master.labrhel.com/repos/base.repo
+
+	Habilitando
+
+	yum-config-manager --enable base
+
+
+### Yum update
+
+>> Actualizar kernell
+
+yum list kernel
+
+yum update kernel
+
+//Siempre se pide reiniciar
+
+>> Descargar repositorios a un archivo local
+
+reposync --repoid=rhel-8-for-x86_64-baseos-rpms -p /var/www/html/repos --downloadcomps --download-metada
+
+>> Agregar excepcion al FW
+
+firewall-cmd --permanent --add-service=http
+
+
+## Usar Llaves
+
+
+	rpm --import https:///
+
+	cd /etc/pki/rpm-gpg/
+
+
+
+## Modulos y flujos de modulos
+
+
+Actualmente un repositorio puede almacenar muchas versiones de un mismo paquete
+
+
+AppStream == Modulos y paquetes tradicionales
+
+yum module list
+
+> Ver flujos de modulos
+
+yum module info php
+
+
+[root@rhel8master ~]# yum module list postgresql
+Updating Subscription Management repositories.
+Last metadata expiration check: 0:20:57 ago on Wed 15 Jul 2020 12:12:13 PM -05.
+App Stream Reporitory for RHEL 8
+Name                              Stream                        Profiles                                  Summary
+postgresql                        9.6                           client, server [d]                        PostgreSQL server and client module
+postgresql                        10 [d]                        client, server [d]                        PostgreSQL server and client module
+
+Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)
+Name                              Stream                        Profiles                                  Summary
+postgresql                        9.6                           client, server [d]                        PostgreSQL server and client module
+postgresql                        10 [d]                        client, server [d]                        PostgreSQL server and client module
+postgresql                        12                            client, server [d]                        PostgreSQL server and client module
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
+> Habilitar flujos de modulo
+
+yum module install php
+
+> Remover
+
+yum module remove php
+
+
+> Desahbilitar un flujo
+
+yum module disable php
+
+> Instalar de un flujo en específico
+
+yum module install postgresql:12
+
+
+
+>> Perfiles de modulos
+
+	yum module install python36:3.6/Common (Common es el perfil)
+
+	yum install @python36:3.6/Common
+
+

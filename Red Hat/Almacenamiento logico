@@ -1,0 +1,71 @@
+###############################
+### Crear un Volumen logico ###
+###############################
+
+1ro. Gestionamos con fdisk la partición si es tipo MBR o GPT
+
+	fdisk /dev/sdb
+
+	Command (m for help): n
+	Partition type
+	   p   primary (2 primary, 0 extended, 2 free)
+	   e   extended (container for logical partitions)
+	Select (default p): p
+	Partition number (3,4, default 3):
+	First sector (1435648-4194303, default 1435648):
+	Last sector, +sectors or +size{K,M,G,T,P} (1435648-4194303, default 4194303): +700MB
+
+	Created a new partition 3 of type 'Linux' and of size 668 MiB.
+
+	Command (m for help): t
+	Partition number (1-3, default 3):
+
+
+2do. Especificamos el tipo de partición , en este caso 8e para LVM
+
+	Hex code (type L to list all codes): 8e
+
+	Changed type of partition 'Linux' to 'Linux LVM'.
+
+	Command (m for help): p
+	Disk /dev/sdb: 2 GiB, 2147483648 bytes, 4194304 sectors
+	Units: sectors of 1 * 512 = 512 bytes
+	Sector size (logical/physical): 512 bytes / 512 bytes
+	I/O size (minimum/optimal): 512 bytes / 512 bytes
+	Disklabel type: dos
+	Disk identifier: 0x955db446
+
+	Device     Boot   Start     End Sectors  Size Id Type
+	/dev/sdb1          2048  821247  819200  400M 8e Linux LVM
+	/dev/sdb2        821248 1435647  614400  300M 8e Linux LVM
+	/dev/sdb3       1435648 2803711 1368064  668M 8e Linux LVM
+
+3.- Ahora creamos etiquetamos nuestra partición como Physical Volume 
+
+	pvcreate /dev/sdb3
+	Physical volume "/dev/sdb3" successfully created.
+
+
+4.- Validamos nuestro Volumen Físico creado:
+
+	pvs or pvdisplay
+
+	[root@rhel8slave1 ~]# pvs --all
+	  PV         VG               Fmt  Attr PSize   PFree
+	  /dev/sda1                        ---       0       0
+	  /dev/sda2  rhel_rhel8slave1 lvm2 a--  <14.00g      0
+	  /dev/sdb1  csm1             lvm2 a--  396.00m 396.00m
+	  /dev/sdb2  csm1             lvm2 a--  296.00m 296.00m
+	  /dev/sdb3                   lvm2 ---  668.00m 668.00m
+	  /dev/sdc   csm2             lvm2 a--   <2.00g  <2.00g
+
+
+
+
+
+
+Crear Grupo de volumen
+
+
+vgcreate Prueba2 /dev/sdb3
+Volume group "Prueba2" successfully created
