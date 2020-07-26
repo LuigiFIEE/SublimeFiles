@@ -63,9 +63,23 @@
 
 
 
+###############################
+### Crear Grupo de volumen ####
+###############################
 
-Crear Grupo de volumen
+1ro Creamos 
+	vgcreate Prueba2 /dev/sdb3
+	Volume group "Prueba2" successfully created
 
 
-vgcreate Prueba2 /dev/sdb3
-Volume group "Prueba2" successfully created
+
+	vgs
+	  VG               #PV #LV #SN Attr   VSize   VFree
+	  Prueba2            1   0   0 wz--n- 664.00m 664.00m
+	  csm1               2   0   0 wz--n- 692.00m 692.00m
+	  csm2               1   0   0 wz--n-  <2.00g  <2.00g
+	  rhel_rhel8slave1   1   2   0 wz--n- <14.00g      0
+
+2do Validamos
+
+	vgs
