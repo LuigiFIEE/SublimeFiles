@@ -21,7 +21,7 @@
 	Partition number (1-3, default 3):
 
 
-2do. Especificamos el tipo de partición , en este caso 8e para LVM
+2do.- Especificamos el tipo de partición , en este caso 8e para LVM
 
 	Hex code (type L to list all codes): 8e
 
@@ -67,19 +67,43 @@
 ### Crear Grupo de volumen ####
 ###############################
 
-1ro Creamos 
+1.- Creamos asignando una etiqueta
+
 	vgcreate Prueba2 /dev/sdb3
 	Volume group "Prueba2" successfully created
 
 
+2.- Validamos
 
 	vgs
+
 	  VG               #PV #LV #SN Attr   VSize   VFree
 	  Prueba2            1   0   0 wz--n- 664.00m 664.00m
 	  csm1               2   0   0 wz--n- 692.00m 692.00m
 	  csm2               1   0   0 wz--n-  <2.00g  <2.00g
 	  rhel_rhel8slave1   1   2   0 wz--n- <14.00g      0
 
-2do Validamos
+3.- consultamos el tamaño de "bloques disponibles - PE Size"
 
-	vgs
+
+	[root@rhel8slave1 ~]# vgdisplay csm1
+	  --- Volume group ---
+	  VG Name               csm1
+	  System ID
+	  Format                lvm2
+	  Metadata Areas        2
+	  Metadata Sequence No  1
+	  VG Access             read/write
+	  VG Status             resizable
+	  MAX LV                0
+	  Cur LV                0
+	  Open LV               0
+	  Max PV                0
+	  Cur PV                2
+	  Act PV                2
+	  VG Size               692.00 MiB
+	  PE Size               4.00 MiB
+	  Total PE              173
+	  Alloc PE / Size       0 / 0
+	  Free  PE / Size       173 / 692.00 MiB
+	  VG UUID               AhFQ6q-dzVt-wo52-kso1-f2Lc-agH1-zAPwYw
