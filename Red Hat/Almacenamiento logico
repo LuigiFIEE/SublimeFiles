@@ -56,7 +56,7 @@
 	  /dev/sda2  rhel_rhel8slave1 lvm2 a--  <14.00g      0
 	  /dev/sdb1  csm1             lvm2 a--  396.00m 396.00m
 	  /dev/sdb2  csm1             lvm2 a--  296.00m 296.00m
-	  /dev/sdb3                   lvm2 ---  668.00m 668.00m
+	  /dev/sdb3  Prueba2          lvm2 a--  668.00m 668.00m
 	  /dev/sdc   csm2             lvm2 a--   <2.00g  <2.00g
 
 
@@ -107,3 +107,113 @@
 	  Alloc PE / Size       0 / 0
 	  Free  PE / Size       173 / 692.00 MiB
 	  VG UUID               AhFQ6q-dzVt-wo52-kso1-f2Lc-agH1-zAPwYw
+
+###############################
+### Crear volumen lógico ######
+###############################
+
+
+1.- Definimos el name y el tamaño 
+
+	- Mediente unidad:
+
+	[root@rhel8slave1 ~]# lvcreate --size 300MB --name MySecondLV csm1
+	Logical volume "MySecondLV" created.
+
+
+	- Mediante PE:
+
+	[root@rhel8slave1 ~]# lvcreate --extents 25 --name MyFirstLV csm1
+  	Logical volume "MyFirstLV" created.
+
+
+2.- Validamos el LV creado
+
+
+	[root@rhel8slave1 ~]# lvs
+	  LV         VG               Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+	  MyFirstLV  csm1             -wi-a----- 100.00m
+	  MySecondLV csm1             -wi-a----- 300.00m
+	  root       rhel_rhel8slave1 -wi-ao---- <12.50g
+	  swap       rhel_rhel8slave1 -wi-ao----   1.50g
+
+
+
+#############################################
+### Dar formato a nuestro LV  y montar ######
+#############################################
+
+
+
+1.- Damos formato a nuestro LV
+
+
+	[root@rhel8slave1 ~]# mkfs.xfs -L PrimerLV /dev/csm1/MyFirstLV
+	meta-data=/dev/csm1/MyFirstLV    isize=512    agcount=4, agsize=6400 blks
+	         =                       sectsz=512   attr=2, projid32bit=1
+	         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+	         =                       reflink=1
+	data     =                       bsize=4096   blocks=25600, imaxpct=25
+	         =                       sunit=0      swidth=0 blks
+	naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+	log      =internal log           bsize=4096   blocks=1368, version=2
+	         =                       sectsz=512   sunit=0 blks, lazy-count=1
+	realtime =none                   extsz=4096   blocks=0, rtextents=0
+
+2.- Editar el /etc/fstab
+
+	[root@rhel8slave1 mnt]# cat /etc/fstab
+
+	#
+	# /etc/fstab
+	# Created by anaconda on Tue Sep 17 01:27:01 2019
+	#
+	# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+	# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+	#
+	# After editing this file, run 'systemctl daemon-reload' to update systemd
+	# units generated from this file.
+	#
+	/dev/mapper/rhel_rhel8slave1-root               /                       xfs     defaults        0 0
+	UUID=134bd339-efe5-45d1-b60c-aa51f395ecca       /boot                   xfs     defaults        0 0
+	/dev/mapper/rhel_rhel8slave1-swap               swap                    swap    defaults        0 0
+	/dev/csm1/MyFirstLV                             /mnt/FSwithLVM1         xfs     defaults        0 0
+
+3.- Reiniciar demonio
+
+	systemctl daemon-reload
+
+
+4.- Montar la partición 
+
+	mount -a
+
+
+5.- Validaciones
+
+	[root@rhel8slave1 mnt]# lsblk -fp
+	NAME                                  FSTYPE      LABEL    UUID                                   MOUNTPOINT
+	/dev/sda
+	├─/dev/sda1                           xfs                  134bd339-efe5-45d1-b60c-aa51f395ecca   /boot
+	└─/dev/sda2                           LVM2_member          LM37oe-1eEG-ZUsa-Q9bK-DEmc-nHUY-ZOoeWJ
+	  ├─/dev/mapper/rhel_rhel8slave1-root xfs                  9e455254-b598-44f8-b9af-8a88d5494dab   /
+	  └─/dev/mapper/rhel_rhel8slave1-swap swap                 42042f5f-3ee2-4278-811b-3d3810394f7d   [SWAP]
+	/dev/sdb
+	├─/dev/sdb1                           LVM2_member          F07jBT-WNJ7-axsz-D2J7-hBHE-9QAJ-UemFdg
+	│ ├─/dev/mapper/csm1-MyFirstLV        xfs         PrimerLV 5ae3c4df-aaa0-411c-a6fd-b4845d82e00f   /mnt/FSwithLVM1
+	│ └─/dev/mapper/csm1-MySecondLV
+	├─/dev/sdb2                           LVM2_member          1ZMcpI-3EoH-l2w0-LEjx-6mJ2-NA6e-SrGFfD
+	│ └─/dev/mapper/csm1-MySecondLV
+	└─/dev/sdb3                           LVM2_member          YIdQGW-TNVr-5iY8-DMmg-o1Z6-aVaE-xZTNvI
+	/dev/sdc                              LVM2_member          kRnrwO-Gj6m-oQQj-c2vZ-N82M-9irk-b5ZR5b
+	/dev/sr0
+
+
+
+
+
+=======> Usando GPT
+
+############################################
+
+udevadm settle

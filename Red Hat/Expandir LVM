@@ -1,0 +1,7 @@
+Notas:
+
+== XFS solo puede extenderse, no reducirse
+
+== Confirmar creacion de particiones ==> udevadm settle || partprobe -s
+
+
