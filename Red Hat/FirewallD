@@ -1,0 +1,39 @@
+###################
+#### firewalld ####
+###################
+
+1.- Ver Reglas
+
+	 firewall-cmd --list-all
+
+	 Por defecto saldrán las reglas de la zona default
+
+2.- Ver zonas
+
+	firewall-cmd --list-all-zones
+
+
+	block	dmz		drop	trusted		home	internal	external	public
+
+
+3.- Edición de reglas
+
+	3.1.- Cambiar la zona por defecto
+
+			firewall-cmd --set-default-zone=home
+
+	3.2.- Eliminar un puerto/regla/servicio:
+
+			firewall-cmd --permanent --remove-port=ssh
+			firewall-cmd --permanent --remove-service=ssh
+
+	3.3.- Agregar un puerto o servicio de forma permanente
+
+			firewall-cmd --permanent --add-service=ssh
+			firewall-cmd --permanent --add-port=25/tcp
+
+	3.4.- Aplicar los cambios
+
+			firewall-cmd --reload
+
+	

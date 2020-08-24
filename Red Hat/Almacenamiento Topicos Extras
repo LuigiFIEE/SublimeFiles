@@ -1,0 +1,177 @@
+###################
+#### Stratis FS ###
+###################
+
+PD: Stratis por defecto permite solo xfs
+
+1.- Instalamos stratis
+
+	yum install stratisd stratis-cli -y
+
+
+2.- Iniciamos el proceso
+
+	[root@rhel8slave2 ~]# systemctl start --now  stratisd
+	[root@rhel8slave2 ~]#
+	[root@rhel8slave2 ~]#
+	[root@rhel8slave2 ~]# systemctl status stratisd
+	● stratisd.service - A daemon that manages a pool of block devices to create flexible file systems
+	   Loaded: loaded (/usr/lib/systemd/system/stratisd.service; enabled; vendor preset: enabled)
+	   Active: active (running) since Thu 2020-08-20 01:45:34 -05; 1s ago
+	     Docs: man:stratisd(8)
+	 Main PID: 24393 (stratisd)
+	    Tasks: 1 (limit: 11516)
+	   Memory: 920.0K
+	   CGroup: /system.slice/stratisd.service
+	           └─24393 /usr/libexec/stratisd --debug
+
+
+3.- Seleccionamos las unidades a agregar:
+
+
+	[root@rhel8slave2 ~]# lsblk -fp | grep sd[b-c]
+	/dev/sdb
+	/dev/sdc
+
+
+4.- Creamos un pool
+
+	stratis pool create LuigiStratis /dev/sdb
+
+5.- Agreguemos una unidad más
+
+	stratis pool add-data LuigiStratis /dev/sdc
+
+6.- Creamos un FS y validamos
+
+	stratis filesystem create LuigiStratis LuigiFS1
+	
+
+	stratis filesystem list
+	Pool Name     Name      Used     Created            Device                          UUID
+	LuigiStratis  LuigiFS1  546 MiB  Aug 20 2020 01:52  /stratis/LuigiStratis/LuigiFS1  495e3ee338074a93ba971d3753cc808a
+
+
+7.- Agregarlo en el FSTAB
+
+	echo "UUID=495e3ee338074a93ba971d3753cc808a /dir_stratis xfs defaults,x-systemd.requires=stratisd.service 0 0" >> /etc/fstab
+
+8.- Reinicias el proceso daemon y finalmente montas
+
+	[root@rhel8slave2 ~]# df -hT /dir_stratis
+	Filesystem                                                                                      Type  Size  Used Avail Use% Mounted on
+	/dev/mapper/stratis-1-e99d882806e740fe9e6a607857926008-thin-fs-495e3ee338074a93ba971d3753cc808a xfs   1.0T  7.2G 1017G   1% /dir_stratis
+
+
+9.- Validams escritura 
+	
+	//Creamos un archivo  random con 50MB
+
+	[root@rhel8slave2 ~]# dd if=/dev/urandom of=/dir_stratis/prueba.txt bs=1024 count=51200
+
+
+	[root@rhel8slave2 ~]# ls -lhtr /dir_stratis
+	total 50M
+	-rw-r--r--. 1 root root 50M Aug 20 02:05 prueba.txt
+
+10.- Craeamos un snapshot
+
+
+	[root@rhel8slave2 ~]# stratis fs snapshot LuigiStratis LuigiFS1 Luigisnap
+	[root@rhel8slave2 ~]# stratis fs list
+	Pool Name     Name       Used     Created            Device                           UUID
+	LuigiStratis  LuigiFS1   596 MiB  Aug 20 2020 01:52  /stratis/LuigiStratis/LuigiFS1   495e3ee338074a93ba971d3753cc808a
+	LuigiStratis  Luigisnap  596 MiB  Aug 20 2020 02:15  /stratis/LuigiStratis/Luigisnap  f35ab804a69142948c1480f4c355398e
+
+
+
+#######################
+#### VDO Filesystem ###
+#######################
+
+PD: Se necesita minimo 20 GB
+Sus características son deduplicación y compresión
+
+
+1.- Creamos un VDO
+
+	[root@rhel8slave2 ~]# vdo create -n LuigiVDI --device /dev/sdd
+	Creating VDO LuigiVDI
+	Starting VDO LuigiVDI
+	Starting compression on VDO LuigiVDI
+	VDO instance 0 volume is ready at /dev/mapper/LuigiVDI
+
+
+2.- Creamos un FS con la partición
+
+	[root@rhel8slave2 ~]# mkfs.xfs -L VDOLugi /dev/mapper/LuigiVDI
+	meta-data=/dev/mapper/LuigiVDI   isize=512    agcount=4, agsize=784888 blks
+	         =                       sectsz=4096  attr=2, projid32bit=1
+	         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+	         =                       reflink=1
+	data     =                       bsize=4096   blocks=3139552, imaxpct=25
+	         =                       sunit=0      swidth=0 blks
+	naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+	log      =internal log           bsize=4096   blocks=2560, version=2
+	         =                       sectsz=4096  sunit=1 blks, lazy-count=1
+	realtime =none                   extsz=4096   blocks=0, rtextents=0
+
+
+3.- Agregamos al FStab
+
+	[root@rhel8slave2 ~]# lsblk --output=UUID /dev/mapper/LuigiVDI
+	UUID
+	26f8e9e0-8bff-447c-9406-2e86234cd67d
+
+
+	[root@rhel8slave2 ~]# echo "UUID=26f8e9e0-8bff-447c-9406-2e86234cd67d /dir_vdo xfs defaults,x-systemd.requires=vdo.service 0 0" >> /etc/fstab
+
+4.- Montamos y validamos
+
+
+	[root@rhel8slave2 ~]# mount -a
+	[root@rhel8slave2 ~]# df -h
+	Filesystem                         Size  Used Avail Use% Mounted on
+	devtmpfs                           900M     0  900M   0% /dev
+	tmpfs                              915M     0  915M   0% /dev/shm
+	tmpfs                              915M  8.5M  907M   1% /run
+	tmpfs                              915M     0  915M   0% /sys/fs/cgroup
+	/dev/mapper/rhel_rhel8slave2-root   13G  1.7G   11G  14% /
+	/dev/sda1                         1014M  166M  849M  17% /boot
+	tmpfs                              183M     0  183M   0% /run/user/0
+	/dev/mapper/LuigiVDI                12G  118M   12G   1% /dir_vdo
+
+5.- Validamos escritura 
+
+	[root@rhel8slave2 ~]# dd if=/dev/zero of=/dir_vdo/jaja.txt bs=1024 count=102400
+	102400+0 records in
+	102400+0 records out
+	104857600 bytes (105 MB, 100 MiB) copied, 0.324907 s, 323 MB/s
+
+	[root@rhel8slave2 ~]# df -Th /dir_vdo
+	Filesystem           Type  Size  Used Avail Use% Mounted on
+	/dev/mapper/LuigiVDI xfs    12G  218M   12G   2% /dir_vdo
+
+
+6.- Validamos estadísticas
+
+
+	[root@rhel8slave2 ~]# vdostats --human-readable
+	Device                    Size      Used Available Use% Space saving%
+	/dev/mapper/LuigiVDI     15.0G      3.0G     12.0G  20%           99%
+
+
+// Mucho ojo con el saving%
+
+	cp install.img /dir_vdo/install_copy.img
+	vdostats --human-readable
+	Device                    Size      Used Available Use% Space saving%
+	/dev/mapper/LuigiVDI     15.0G      3.3G     11.7G  22%           24%
+
+// Volvemos a volver a copiar, Used no aumenta
+
+
+	[root@rhel8slave2 ~]# cp install.img /dir_vdo/install_copy2.img
+	[root@rhel8slave2 ~]# vdostats --human-readable
+	Device                    Size      Used Available Use% Space saving%
+	/dev/mapper/LuigiVDI     15.0G      3.5G     11.5G  23%           43%

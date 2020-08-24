@@ -1,0 +1,263 @@
+#######################
+### Service chronyd ###
+#######################
+
+1.- Reviamos el estado del servicio chrony
+
+	systemctl statu chronyd
+
+
+2.- Archivo de configuracion del NTP
+
+	cat /etc/chrony.conf
+
+
+3.- Validación del proceso
+
+	timedatectl
+
+4.- Valdando
+chronyc tracking
+chronyc sources -v
+
+
+5.- Setear configuraciones
+
+timedatectl set-ntp yes
+
+
+
+#############################
+### Analyzando jornalctl ####
+#############################
+
+
+1.- Validar status
+
+	systemctl status systemd-journald
+
+2.- Archivo de configuracion
+
+[root@rhel8slave2 nfs]# cat /etc/systemd/journald.conf
+
+
+3.- Hacer persistente la generación de esto archivos:
+
+
+	[Journal]
+	Storage=persistent
+	#Compress=yes
+	#Seal=yes
+
+4.- Validamos
+
+
+	[root@rhel8slave2 journal]# ls -R /var/log/journal/
+	/var/log/journal/:
+	0576011d3e5c4f759c29ffa856d70d9d
+
+	/var/log/journal/0576011d3e5c4f759c29ffa856d70d9d:
+	system.journal
+
+5.- Validamos los logs de cada reinicio
+
+	[root@rhel8slave2 journal]# journalctl --list-boot
+	-4 98ab1c22afea41078817d7888ee72494 Fri 2020-08-21 01:44:40 -05—Fri 2020-08-21 15:11:52 -05
+	-3 2f7864cbec5a42a6a7adc2bc4ae8d30c Sat 2020-08-22 13:02:29 -05—Sat 2020-08-22 16:45:33 -05
+	-2 25920a2a3ae94585b2bdff31162e2219 Sat 2020-08-22 16:45:43 -05—Sat 2020-08-22 17:12:13 -05
+	-1 7bbe889b574440c1a065c14ce83a721d Sat 2020-08-22 17:12:24 -05—Sat 2020-08-22 17:50:22 -05
+	 0 f203c45ee02348dd9dd6cbc2ea04a2fc Sun 2020-08-23 00:41:53 -05—Sun 2020-08-23 01:14:58 -05
+
+6.- Analizando logs:
+
+// Tamaño máximo de los archivos
+
+	[root@rhel8slave2 journal]# journalctl -b 0 | grep -iE 'runtime journal |system jornal'
+	Aug 23 00:41:53 rhel8slave2.labrhel.com systemd-journald[186]: Runtime journal (/run/log/journal/0576011d3e5c4f759c29ffa856d70d9d) is 8.0M, max 91.4M, 83.4M free.
+	Aug 23 00:42:15 rhel8slave2.labrhel.com systemd-journald[618]: Runtime journal (/run/log/journal/0576011d3e5c4f759c29ffa856d70d9d) is 8.0M, max 91.4M, 83.4M free.
+	[root@rhel8slave2 journal]# journalctl -b 0 | grep -iE 'runtime journal |system journal'
+	Aug 23 00:41:53 rhel8slave2.labrhel.com systemd-journald[186]: Runtime journal (/run/log/journal/0576011d3e5c4f759c29ffa856d70d9d) is 8.0M, max 91.4M, 83.4M free.
+	Aug 23 00:42:15 rhel8slave2.labrhel.com systemd-journald[618]: Runtime journal (/run/log/journal/0576011d3e5c4f759c29ffa856d70d9d) is 8.0M, max 91.4M, 83.4M free.
+	Aug 23 00:42:16 rhel8slave2.labrhel.com systemd-journald[618]: System journal (/var/log/journal/0576011d3e5c4f759c29ffa856d70d9d) is 16.0M, max 2.0G, 1.9G free.
+// Procesos o niveles de criticidad (syslog)
+
+
+[root@rhel8slave2 journal]# journalctl -p debug
+-- Logs begin at Fri 2020-08-21 01:44:40 -05, end at Sun 2020-08-23 01:22:30 -05. --
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: Linux version 4.18.0-80.el8.x86_64 (mockbuild@x86-vm-08.build.eng.bos.redhat.com) (gcc version 8.2.1 20180905 (Red >
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-4.18.0-80.el8.x86_64 root=/dev/mapper/rhel_rhel8slave2-root ro crashk>
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+Aug 21 01:44:40 rhel8slave2.labrhel.com kernel: x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, u
+
+// Ejemplo de verbose 
+
+
+[root@rhel8slave2 journal]# journalctl  -u stratisd.service  -o verbose
+-- Logs begin at Fri 2020-08-21 01:44:40 -05, end at Sun 2020-08-23 01:22:30 -05. --
+Fri 2020-08-21 01:44:53.850893 -05 [s=96b74a2a21494f90a0033b865163e16a;i=279;b=98ab1c22afea41078817d7888ee72494;m=d70912;t=5ad5d93075f0d;x=d1820d3ee6858168]
+    _BOOT_ID=98ab1c22afea41078817d7888ee72494
+    _MACHINE_ID=0576011d3e5c4f759c29ffa856d70d9d
+    _HOSTNAME=rhel8slave2.labrhel.com
+    PRIORITY=6
+    SYSLOG_FACILITY=3
+    _UID=0
+    _GID=0
+    _SYSTEMD_SLICE=system.slice
+    _CAP_EFFECTIVE=3fffffffff
+    _TRANSPORT=stdout
+    _SELINUX_CONTEXT=system_u:system_r:init_t:s0
+    _STREAM_ID=a1a90edbcfa34a96a393d5ed30ccd857
+    SYSLOG_IDENTIFIER=stratisd
+    MESSAGE=DEBUG libstratis::stratis::buff_log: BuffLogger: pass_through: true hold time: none
+    _PID=617
+    _COMM=stratisd
+    _EXE=/usr/libexec/stratisd
+    _CMDLINE=/usr/libexec/stratisd --debug
+    _SYSTEMD_CGROUP=/system.slice/stratisd.service
+    _SYSTEMD_UNIT=stratisd.service
+    _SYSTEMD_INVOCATION_ID=958ea17b48f5480a80548cad9fdb51ce
+
+
+
+
+################################
+### Configuracion de syslog ####
+################################
+
+
+1.- Validar el servicio rsyslogd
+
+	[root@rhel8slave2 /]# systemctl status rsyslog --all
+	● rsyslog.service - System Logging Service
+	   Loaded: loaded (/usr/lib/systemd/system/rsyslog.service; enabled; vendor preset: enabled)
+	   Active: active (running) since Sun 2020-08-23 00:42:49 -05; 46min ago
+	     Docs: man:rsyslogd(8)
+	           http://www.rsyslog.com/doc/
+	 Main PID: 1309 (rsyslogd)
+	    Tasks: 3 (limit: 11516)
+	   Memory: 12.8M
+	   CGroup: /system.slice/rsyslog.service
+	           └─1309 /usr/sbin/rsyslogd -n
+
+
+2.- Encontrando el archivo de configuracion
+
+
+// Todos los logs que criticlidad  info al /var/log/messages, se aplica así con los demás
+
+
+	[root@rhel8slave2 /]# cat /etc/rsyslog.conf  | grep -v '#' | grep [a-zA-Z]
+	global(workDirectory="/var/lib/rsyslog")
+	module(load="builtin:omfile" Template="RSYSLOG_TraditionalFileFormat")
+	include(file="/etc/rsyslog.d/*.conf" mode="optional")
+	*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+	authpriv.*                                              /var/log/secure
+	mail.*                                                  -/var/log/maillog
+	cron.*                                                  /var/log/cron
+	*.emerg                                                 :omusrmsg:*
+	uucp,news.crit                                          /var/log/spooler
+	local7.*                                                /var/log/boot.log
+
+3.- Archivo de configuracion customizado
+
+// Todos los mensajes de tipo DEBUG hacia arriba (alert,warning,info,error, critical,emergency) se escribiran en /var/log/luigilog-debug
+
+	[root@rhel8slave2 /]# cat /etc/rsyslog.d/Luigilog.conf | grep -v '#'
+
+	*.debug                 /var/log/luigilog-debug
+
+
+4.- Al  modificar cada uno de estos se debe reiniciar el proceso.
+
+
+
+
+#########################
+### Rotación de logs ####
+########################$
+
+Actividad de mantenimiento de logs para que no se sature un FS.
+
+1.- Archivo de configuracion
+
+
+
+	[root@rhel8slave2 /]# cat /etc/logrotate.conf
+	# see "man logrotate" for details
+	# rotate log files weekly
+	weekly
+
+	# keep 4 weeks worth of backlogs
+	rotate 4
+
+	# create new (empty) log files after rotating old ones
+	create
+
+	# use date as a suffix of the rotated file
+	dateext
+
+	# uncomment this if you want your log files compressed
+	#compress
+
+	# RPM packages drop log rotation information into this directory
+	include /etc/logrotate.d
+
+	# system-specific logs may be also be configured here.
+
+
+2.- Formar un logrotate
+
+
+	logrotate -f /etc/logrotate.conf
+
+
+3.- Cada cuanto tiempo ocurre esto:
+
+
+	[root@rhel8slave2 /]# cat /etc/cron.daily/logrotate
+	#!/bin/sh
+
+	/usr/sbin/logrotate /etc/logrotate.conf
+	EXITVALUE=$?
+	if [ $EXITVALUE != 0 ]; then
+	    /usr/bin/logger -t logrotate "ALERT exited abnormally with [$EXITVALUE]"
+	fi
+	exit $EXITVALUE
+
+
+####################################
+#### Generar mis propios logs ######
+####################################
+
+
+
+1.- Usaremos el comando logger con la prioridad y mensaje
+
+
+	[root@rhel8slave2 ~]# logger -p 0 "Oe cagada"
+
+	Broadcast message from systemd-journald@rhel8slave2.labrhel.com (Sun 2020-08-23 02:44:54 -05):
+
+	root[7791]: Oe cagada
+
+	
+2.- En nuestro archivo.
+
+
+	Aug 23 02:44:45 rhel8slave2 root[7789]: Oe cagada
+
+	Broadcast message from systemd-journald@rhel8slave2.labrhel.com (Sun 2020-08-23 02:44:54 -05):
+
+	root[7791]: Oe cagada
+
+	Aug 23 02:44:54 rhel8slave2 root[7791]: Oe cagada
+
+	Aug 23 02:45:54 rhel8slave2 root[7807]: Oe cagada
+
+
+
+
+

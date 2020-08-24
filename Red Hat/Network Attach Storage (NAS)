@@ -1,0 +1,121 @@
+##############
+#### NFS #####
+##############
+
+Network File System, version actual 4 (TCP). Versiones anteriores soportaban UDP y es compatible con legado con v3.
+
+
+1.- Montar un FS de otro servidor en el mio (cliente)
+
+mount  rhel8master:/   /mnt
+
+2.- Revisamos que carpetas nos comparte el "servidor NFS"
+
+
+	[root@rhel8slave2 ~]# showmount -e rhel8master
+	Export list for rhel8master:
+	/srv/indirect       *
+	/srv/direct/externo *
+	/srv/nfs            *
+	/home/ldap          *
+
+
+3.- Montaje específico (metodo correcot)
+
+[root@rhel8slave2 ~]# mount -t nfs -o rw,sync rhel8master:/   /mnt
+
+
+4.- Validamos
+
+	mount -l  | grep nfs
+
+	rhel8master:/ on /mnt type nfs4 (rw,relatime,sync,vers=4.2,rsize=524288,wsize=524288,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=10.200.1.27,local_lock=none,addr=10.200.1.25)
+
+
+#################
+### NFSCONF #####
+#################
+
+Usa el archivo /etc/nfs.conf
+
+
+1.- Setemos la version de NFS que queremos usar y restringimos el protocolo UDP permitiendo el tcp
+
+
+	nfsconf --set nfsd vers2 n
+	nfsconf --set nfsd vers3 n
+	nfsconf --set nfsd vers4 y
+	nfsconf --set nfsd vers4.0 y
+	nfsconf --set nfsd vers4.1 y
+	nfsconf --set nfsd vers4.2 y
+	nfsconf --set nfsd tcp y
+	nfsconf --unset nfsd udp no
+	nfsconf --set nfsd udp n
+2.- Finalmente reiniciamos el porceso nfs
+
+
+############################
+### Haciendo persistente ###
+############################
+
+
+	echo "rhel8master:/ /testnfs nfs rw,sync 0 0" >> /etc/fstab
+
+
+
+############################
+####### Metodo indirecto ###
+############################
+
+
+1.- Creo un archivo con la siguiente configuracion
+
+
+	[root@rhel8slave2 ~]# cat /etc/auto.master.d/direct.autofs
+	/directo /etc/directo.nfs
+
+2.- El directorio "directo" será creado, validamos que tener en /etc/directo.nfs
+
+// indirect debe coincidir con la última carpeta 
+
+	[root@rhel8slave2 ~]# echo "indirect -rw,sync,fstype=nfs4 rhel8master:/srv/indirect " > /etc/directo.nfs
+
+// Esto en base a las carpetas que nos muestra
+
+	[root@rhel8slave2 ~]# showmount -e rhel8master
+	Export list for rhel8master:
+	/srv/indirect       *
+	/srv/direct/externo *
+	/srv/nfs            *
+	/home/ldap          *
+	[root@rhel8slave2 ~]#
+
+
+3.- Reiniciamos el servicio y validamos-
+
+	[root@rhel8slave2 ~]# systemctl restart autofs
+
+
+// Inicialmente no vemos nada
+
+	[root@rhel8slave2 directo]# ls -lhtr
+
+// Sin embargo me deja entrar y listar
+
+	[root@rhel8slave2 directo]# cd indirect
+	[root@rhel8slave2 indirect]#
+	[root@rhel8slave2 indirect]# ls
+	centro  este  oeste
+
+###########################
+####### Metodo directo ####
+###########################
+
+// igual que indirecto solo cambia el path
+
+
+	[root@rhel8slave2 indirect]# echo "/- /etc/direct.fs" >> /etc/auto.master.d/directo.autofs
+
+// Configuracion del mount con fstype=4
+
+	[root@rhel8slave2 indirect]# vim "/mnt/nfs -rw,sync,fstype=nfs4 rhel8master:/srv/nfs" > "/etc/direct.fs"
