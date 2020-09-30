@@ -1,0 +1,17 @@
+#########################
+##### Crontabs #########
+########################
+
+1.- Demonio
+
+	cron.d
+
+
+2.- Llevar nuestro script al crontab
+
+
+	crontab file
+
+	crontab -l
+
+

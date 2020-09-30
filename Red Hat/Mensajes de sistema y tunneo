@@ -1,0 +1,173 @@
+############################
+###### Tipos de mensajes ###
+#############################
+
+1.- Usando comando kill
+
+
+	[root@rhel8slave1 home]# kill -l
+	 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
+	 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
+	11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
+	16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+	21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+	26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
+	31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
+	38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+	43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+	48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
+	53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
+	58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+	63) SIGRTMAX-1  64) SIGRTMAX
+
+
+2.- Enviando señales a los PID
+
+
+	kill -15 123
+
+3.- Encontrando procesos
+
+
+	[root@rhel8slave1 home]# pgrep tail
+	1943
+
+	[root@rhel8slave1 home]# ps -ef | grep -i tail
+	root      1943  1920  0 01:26 pts/1    00:00:00 tail -f jaja
+
+
+
+
+##############################################
+######### Enviando procesos al background ####
+##############################################
+
+1.- Stopeando un porceso
+
+	Aplastamos Ctrl + Z
+
+2.- Listamos por "jobs" o procesos stopeados
+
+
+	[root@rhel8slave1 home]# jobs
+	[1]+  Stopped                 tail -f jaja
+
+3.- Enviamos al background
+
+	[root@rhel8slave1 home]# bg 1
+	[1]+ tail -f jaja &
+
+
+
+4.- Si quisieramos traerlo al frente
+
+	[root@rhel8slave1 home]# fg
+	tail -f jaja
+
+
+
+
+
+
+##########################
+### Tuneo de procesos ####
+##########################
+
+1.- Validar el paquete
+
+
+	[root@rhel8slave1 home]# rpm -qa | grep -i tuned
+	tuned-2.10.0-15.el8.noarch
+
+
+	[root@rhel8slave1 home]# yum list installed tuned
+	Updating Subscription Management repositories.
+	Unable to read consumer identity
+	This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+	Installed Packages
+	tuned.noarch                                                                 2.10.0-15.el8                                                                 @anaconda
+
+
+2.- Validar servicio en UP
+
+		[root@rhel8slave1 home]# systemctl status tuned
+		● tuned.service - Dynamic System Tuning Daemon
+		   Loaded: loaded (/usr/lib/systemd/system/tuned.service; enabled; vendor preset: enabled)
+		   Active: active (running) since Mon 2020-08-31 00:42:21 -05; 53min ago
+		     Docs: man:tuned(8)
+		           man:tuned.conf(5)
+		           man:tuned-adm(8)
+		 Main PID: 951 (tuned)
+		    Tasks: 4 (limit: 11516)
+		   Memory: 19.1M
+		   CGroup: /system.slice/tuned.service
+		           └─951 /usr/libexec/platform-python -Es /usr/sbin/tuned -l -P
+
+		Aug 31 00:42:17 rhel8slave1.labrhel.com systemd[1]: Starting Dynamic System Tuning Daemon...
+		Aug 31 00:42:21 rhel8slave1.labrhel.com systemd[1]: Started Dynamic System Tuning Daemon.
+
+
+2.- Validar perfil actual
+
+		[root@rhel8slave1 home]# tuned-adm active
+		Current active profile: virtual-guest
+
+3.- Listar perfiles
+
+
+	[root@rhel8slave1 home]# tuned-adm list
+	Available profiles:
+	- balanced                    - General non-specialized tuned profile
+	- desktop                     - Optimize for the desktop use-case
+	- latency-performance         - Optimize for deterministic performance at the cost of increased power consumption
+	- network-latency             - Optimize for deterministic performance at the cost of increased power consumption, focused on low latency network performance
+	- network-throughput          - Optimize for streaming network throughput, generally only necessary on older CPUs or 40G+ networks
+	- powersave                   - Optimize for low power consumption
+	- throughput-performance      - Broadly applicable tuning that provides excellent performance across a variety of common server workloads
+	- virtual-guest               - Optimize for running inside a virtual guest
+	- virtual-host                - Optimize for running KVM guests
+	Current active profile: virtual-guest
+
+
+4.- Setear un nuevo perfil
+
+
+	// Detenemos el profiled
+
+	tuned-adm off
+
+	// Seteamos el pefil
+
+	tuned-adm profile latency-performance
+
+	// Validamos 
+
+	[root@rhel8slave1 home]# tuned-adm active
+	Current active profile: latency-performance
+
+
+
+#####################################################
+####### Priorizando procesos con renace o nice ######
+#####################################################
+
+
+1.- A mayor Prioridad menor es el "NICE", valores varian entre -15 y +19
+
+
+
+[root@rhel8slave1 home]# ps aux -p 1
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.7 180856 13548 ?        Ss   00:41   0:02 /usr/lib/systemd/systemd --switched-root --system --deserialize 18
+
+
+2.- Cambiando prioridad 
+
+	[root@rhel8slave1 home]# renice -n -15 -p 23
+	23 (process ID) old priority 19, new priority -15
+
+
+3.- Ejecutar con prioridad en específico
+
+
+

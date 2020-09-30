@@ -1,0 +1,260 @@
+#####################
+### Crear usuarios ##
+#####################
+
+useradd -c "COmentario" -u 1212 (if we want a specific UID) C18920
+
+##########################
+#### Modificar usuarios ##
+##########################
+
+usermod -aG GrupoAdicional C18920 // Here we set a secundary group for our user
+
+############################
+3### Eliminar usuarios #####
+############################
+
+userdel -r C18920  // The flag "r" say that we deleted too home for user C18920
+
+#######################
+#### Crear grupos #####
+#######################
+
+
+groupadd -r Developers  // We set the flag "r" if we want specific the group as system group
+
+
+########################################################################
+### Modificar y validar expiracion password como validez de cuenta #####
+########################################################################
+
+
+chage -l C18920
+
+// Example
+
+[root@rhel8slave1 ~]# chage -l luigi
+Last password change                                    : password must be changed
+Password expires                                        : password must be changed
+Password inactive                                       : password must be changed
+Account expires                                         : never
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+
+
+chage -d 0 C18920  //If want that in the next session must change the password
+
+chage -E 2020-09-01 C18920 // Date want our account expire
+
+
+
+#################################################
+####### Topicos de restrinccion de usuario ######
+#################################################
+
+
+1.- Bloquear usuario
+
+
+	usermod -L C18920
+
+2.- Cambioar el intérprete de shell
+
+	usermod -s /bin/nologin C18920
+
+
+3.- Hacer que una cuente expire
+
+
+	usermod -e 2020-09-01 C18920
+
+
+4.- Para desbloquear usuario
+
+
+	usermod -U C18920
+
+
+####################
+## Validaciones ####
+####################
+
+1.- Creacion de usuarios
+
+getent passwd luigi
+
+	[root@rhel8slave1 ~]# getent passwd luigi
+	luigi:x:1242:1242:luigi:/home/luigi:/bin/bash
+
+
+2.- Creación de grupos
+
+
+	[root@rhel8slave1 ~]# getent group boso
+	boso:x:1248:luigi,hector,jose
+
+3.- Miembros de un grupo
+
+	[root@rhel8slave1 ~]# groupmems -l -g boso
+	luigi  hector  jose
+	[root@rhel8slave1 ~]# groupmems -l -g redcorp
+	ernesto  lady  mishel
+
+
+4.- File con password encriptadas
+
+
+	luigi:$6$XpOauujF6dTPcMtO$cvSUxdRzq5artJirK7SqyEpPtmYsbLrXdqUeKVKmNIcL.4GP5P7cdDsrC8m1xrA1m2wHRdLebs2pgsuAD78Jr.:0:0:99999:7:::
+	hector:$6$.ERbTw5M2Z00Rs4d$YlD84VK.w9o2biR641uGnLXxxNBHuyH5zpx002BVNn68Ue0TWhDte9AGm3umSpgyaAP6XOvfH1QWDZ76paYb2/:0:0:99999:7:::
+	jose:$6$361I7nlVMTdZDaIJ$iY/Udpik3mRrPhF375llvHFtFSDMWcVpYVdVx8jBPXIApTbXZT1GydIAMZIoBpvaD9H4l1V/OVV7n3BbpaPsE1:0:0:99999:7:::
+	ernesto:$6$Srp9atVOK/XkfTnb$Jp0/mT/xe.s5EHf5ZC2yViOcKIzQDCLPGtPDTNJdPHegi1GOD7G8Hh4yVqyeuGoxqqa7c6eU9mKNexTuBTfym.:0:0:99999:7:::
+	lady:$6$IntMyI18M9JDCHs0$O6Ri9nIM8x7IdnPM0AC.da3B.59FPrpKgbYogUjQCrhLjDm.xBEd/r.xcBV5r89QSA28bt5miEz7wGdUV0XgG1:0:0:99999:7:::
+	mishel:$6$3oPy9XJEZ6xfQ1lK$7384/qkk34L.wulzEYBl8obi1gTN7oIg7JW1m4Z2qtUF9QV90uLmtM3pEOvK2kdH6ib0hTk7JXYE5WULt1MfO/:0:0:99999:7:::
+
+
+5.- Archivo que setea los shell por defecto
+
+	[root@rhel8slave1 ~]# cat /etc/skel/.bashrc
+	# .bashrc
+
+	# Source global definitions
+	if [ -f /etc/bashrc ]; then
+	        . /etc/bashrc
+	fi
+
+	# User specific environment
+	PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+	export PATH
+
+	# Uncomment the following line if you don't like systemctl's auto-paging feature:
+	# export SYSTEMD_PAGER=
+
+	# User specific aliases and functions
+
+
+6.- Archivo con user and group id por defecto
+
+	[root@rhel8slave1 ~]# cat /etc/login.defs  | grep -v '#' | grep [a-zA-Z]
+	MAIL_DIR        /var/spool/mail
+	PASS_MAX_DAYS   99999
+	PASS_MIN_DAYS   0
+	PASS_MIN_LEN    5
+	PASS_WARN_AGE   7
+	UID_MIN                  1000
+	UID_MAX                 60000
+	SYS_UID_MIN               201
+	SYS_UID_MAX               999
+	GID_MIN                  1000
+	GID_MAX                 60000
+	SYS_GID_MIN               201
+	SYS_GID_MAX               999
+	CREATE_HOME     yes
+	UMASK           077
+	USERGROUPS_ENAB yes
+	ENCRYPT_METHOD SHA512
+
+
+
+########################
+##### Acceso sudoers ###
+########################
+
+1.- Editar el archivo
+
+	cat /etC/sudoers
+
+	visudo
+
+
+2.- Configuración personlizada
+
+
+	cd /etc/sudoers.d/miprofiles
+
+
+
+3.- Pasar config
+
+
+	echo "user ALL=(ALL) ALL" >> etc/sudoers.d/miprofile
+
+
+#############################################
+### PErmisos y propietarios de capetas ######
+#############################################
+
+
+1.- Modificar owner
+
+	chown C18920:grupo1 Compartido
+
+	chown UserOwn:GroupOwn File_or_Directory
+
+
+2.- Modificar permisos
+
+
+	chmod g+rwx,o-x filetest	// Here set right for group and other
+	chmod a+x filetest			// Here affect all type for right
+	chmod 771 filetest			// Here affect (rwx) for users , (rwx) for groups and (--x) for others
+
+
+######################################
+######### Permisos especiales ########
+######################################
+
+
+1.- Existen permisos especiales para users, groups and others rights.
+
+		User 	+ Groups 	+ Others
+
+		4			2			1
+
+Entonces:
+		> Si solo queremos permisos especiales para usuario es "4"
+		> Si solo queremos permsos especiales para groups es "2"
+		> Si solo queremos permsos especiales para otros es "1"
+
+		// Las demás consideraciones para 2 o más privilegios
+
+
+Este número se antepone a los bits de U+G+O
+
+
+	Example:
+
+	[root@rhel8slave1 home]# chmod 6771 boso 	// Here set "6" equal to User and groups especial rights
+
+	drwsrws--x. 2 root      boso       56 Aug 30 03:38 BOSO
+	
+2.- Explicación de permisos especiales
+
+	4 = Quien ejecute el archivo lo hará como el owner del archivo
+	2 = Quieen cree archivos en el directorio mantendrá el grupo owner en adelante
+	1 = Solo el owner del archivo puede eliminarlo conocido como sticky bit
+
+
+#########################
+### Calculo de umask ####
+#########################
+
+
+1.- El umask son los permisos por defecto con los que creamos los archivos
+
+	Example:
+
+
+	[root@rhel8slave1 home]# umask
+	0022
+
+	[root@rhel8slave1 home]# ls -ltr jaja
+	-rw-r--r--. 1 root root 0 Aug 31 01:20 jaja
+
+2.- Cada uno pude cambiar su umask
+
+
+
+
+
+

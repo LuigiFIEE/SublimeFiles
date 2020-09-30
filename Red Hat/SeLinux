@@ -228,6 +228,8 @@ Existe el concepto de herencia de contextos
 ############################
 
 
+// Para ejecutar programas desde otros directorio
+
 1.- Listando booleanos
 
 	[root@rhel8slave2 /]# getsebool -a | grep httpd_use
