@@ -1,14 +1,19 @@
 ## Pruebas de Python
 
-print("Hola pendejo")
-
-4600H 
-4700U
+##print("Hola pendejo")
 
 
+def multi(a,b):
+
+	var=0
+	resul=0
+
+	while ( var<b ):
+
+		resul=resul+a
+		var=var+1
+
+	return resul
 
 
-LR0DJKX3
-
-
-c4c37e1a919b83cb8f9b46915e565f2b
+print (multi(3,5))
