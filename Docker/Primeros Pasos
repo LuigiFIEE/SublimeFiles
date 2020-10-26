@@ -1,0 +1,46 @@
+## Definición:
+
+Docker ejecuta "micro-servicios" en tu propio SO independizando las librerias y archivos necesarios para su ejecución  del mismos sistema operativo.
+Esto asegura la compatibilidad de cada "micro-servicio" en cualquier SO que soporte Dockers.
+
+## Terminos a conocer
+
+1.-	Imagenes: Llamese así al ejecutable o "micro-servicio" con sus librerias.
+
+2.- Container: Imagen con puerto de servicio, shell, y directorio definido donde corre el "micro-servicio"
+
+3.- Compose: Archivo de configuración de cada container.
+
+## Comandos
+
+== Clonar una imagen:
+
+	docker pull mariadb
+
+== Buscar una imagen : 
+	
+	docker search mysql
+
+== Leer imagenes :
+
+	docker images -a
+
+== Crear un "Container" a partir de una imagen:
+
+	docker create --name LuigiSQL -i -p 3306:3306 -e MYSQL_ROOT_PASSWORD=FIEEyeah!1 mysql
+
+== Validando la creación del container:
+
+	docker ps -a
+
+	CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+	ebfd3490efef        mysql               "docker-entrypoint.s…"   36 seconds ago      Created                                 LuigiSQL
+
+
+
+
+== Ingresando al prompt de un contener
+
+	docker exec -it LuigiSQL bash
+
+
