@@ -14,4 +14,5 @@ def UserCreation(name,password):
 
 	subprocess.run("curl -X GET http://192.168.1.90:8060/api/json/admin/listUsers?apiKey=44a57108065a4950a4756d96d7f2099e")
 
-	
+## curl -X POST http://192.168.1.90:8060/api/json/admin/addUser?apiKey=44a57108065a4950a4756d96d7f2099e&userName=C18920&privilege=Administrators&password=FIEEyeah!1
+
