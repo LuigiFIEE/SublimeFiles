@@ -1,0 +1,61 @@
+== How to create a user and give privileges over  databases
+
+	CREATE USER 'C18920'@'%' IDENTIFIED BY 'FIEEyeah!1'
+
+	GRANT ALL PRIVILEGES ON *.* TO 'C18920'@'%'
+
+== Data type
+
+
+	>	Numeric : int , bigint, decimal, float
+	>	Data/Time: date, time, timestamp
+	>	Character/ String: char, varchar
+	>	Unicode Character/String : nchar, nvarchar
+	>	Binary: binary, varbinary
+	>	Miscellaneous: xml, json
+
+
+== Comandos
+
+	== Create table
+
+		CREATE TABLE Persons (
+		    PersonID int,
+		    LastName varchar(255),
+		    FirstName varchar(255),
+		    Address varchar(255),
+		    City varchar(255)
+		);
+
+	== Insert
+
+		INSERT INTO  VPNSSL (Colum1 , Colum2, etc) VALUES ('Luigi', 'Raymundo');
+
+	== ALTER TABLE
+
+		ALTER TABLE ICMP.VPNSSL CHANGE Secuencia RTT int NULL;
+		
+		ALTER TABLE ICMP.VPNSSL CHANGE `Time` Secuencia int NULL;
+ 
+
+		ALTER TABLE VPNSSL ADD Secuencia INT ;
+
+		ALTER TABLE VPNSSL ALTER COLUMM Secuencia BIGINT ;
+
+
+	== Actualizar password
+
+		ALTER USER 'root'@'localhost' IDENTIFIED BY 'Claro123!';
+
+	== Actualizar tipo de columna
+
+
+		UPDATE table_name
+		SET column1 = value1, column2 = value2, ...
+		WHERE condition; 
+
+
+
+
+	
+

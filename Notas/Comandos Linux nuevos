@@ -1,0 +1,37 @@
+
+== IPTables
+
+
+
+Chain LOCAL_MANAGEMENT_CONTROL (2 references)
+num  target     prot opt source               destination
+1    DROP       tcp  --  anywhere             anywhere            tcp dpt:www
+2    ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:www
+3    DROP       tcp  --  anywhere             anywhere            tcp dpt:443
+4    ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:443
+5    DROP       tcp  --  anywhere             anywhere            tcp dpt:ssh
+6    ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:ssh
+7    RETURN     udp  --  anywhere             anywhere            udp dpt:!161
+8    ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:50027
+9    ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:139
+10   ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:445
+11   RETURN     tcp  --  anywhere             anywhere            tcp dpt:9100
+12   ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:1900
+13   ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:5000
+14   DROP       all  --  anywhere             anywhere
+
+
+== Iptables  example
+
+
+	== Append new rule to specific Chain
+
+iptables -A <chain> -i <interface> -p <protocol (tcp/udp) > -s <source> --dport <port no.>  -j <target>
+
+iptables 
+
+	== Delete a exist rule 
+
+iptables -D  LOCAL_MANAGEMENT_CONTROL 7
+
+
