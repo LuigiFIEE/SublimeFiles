@@ -1,0 +1,21 @@
+https://sandboxapicdc.cisco.com/
+
+admin/ciscopsdt
+
+
+== Login
+
+https://sandboxapicdc.cisco.com/api/aaaLogin.json
+
+POST Json
+
+{
+	"aaaUser": {
+		"attributes": {
+			"name": "admin",
+			"pwd": "ciscopsdt"
+		}
+	}
+}
+
+GET https://sandboxapicdc.cisco.com/api/class/aaaUser.json

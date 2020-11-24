@@ -44,3 +44,20 @@ Esto asegura la compatibilidad de cada "micro-servicio" en cualquier SO que sopo
 	docker exec -it LuigiSQL bash
 
 
+== Ejemplo docker
+
+docker create --name LuigiElastic -i -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" 37190fe5beea
+
+
+
+docker create --name LuigiKibana --link LuigiElastic:elasticsearch -p 5601:5601 da7fcd592595
+
+
+Explicación de flags:
+
+-i 			interactive
+--link 		Link to other container
+-p 			Port to expose 
+--name 		Name as Container
+
+
