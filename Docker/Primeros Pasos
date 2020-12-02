@@ -61,3 +61,10 @@ Explicación de flags:
 --name 		Name as Container
 
 
+
+
+==Desactivar hyper-v
+
+
+bcdedit /set hypervisorlaunchtype auto
+
