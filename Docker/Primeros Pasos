@@ -44,6 +44,11 @@ Esto asegura la compatibilidad de cada "micro-servicio" en cualquier SO que sopo
 	docker exec -it LuigiSQL bash
 
 
+== Ingresando con attach
+
+	docker attach test
+
+
 == Ejemplo docker
 
 docker create --name LuigiElastic -i -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" 37190fe5beea
@@ -62,6 +67,10 @@ Explicación de flags:
 
 
 
+== Ejecutar un contenedor directamente desde una imagen con "run"
+
+
+	docker run -di ansible/centos7-ansible
 
 ==Desactivar hyper-v
 

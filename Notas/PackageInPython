@@ -1,0 +1,11 @@
+
+
+Modules os and subprocess in python
+
+
+
+
+
+subprocess.run("example")
+subprocess.run(["example","jaja"])
+

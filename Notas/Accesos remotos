@@ -11,10 +11,30 @@ proveedores
 4600H 
 4700U
 
-3GETHzoB
+##########################
+## VPN Cisco Anyconnect ##
+##########################
+
+Pass: 3GETHzoB
+
+
 
 
 LR0DJKX3
 
 
 c4c37e1a919b83cb8f9b46915e565f2b
+
+###########
+## BICP ###
+###########
+
+Data source == JDBC
+
+Console == Loggin de eventos en la plataforma, y 
+
+Data permission ==
+
+My portal ==
+
+CAT= Corte Atencion TEcnologica 
