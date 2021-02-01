@@ -72,6 +72,10 @@ Explicación de flags:
 
 	docker run -di ansible/centos7-ansible
 
+	docker create --name LuigiFileBeat -p 2055:2055 docker.elastic.co/beats/filebeat:7.10.2 setup -E setup.kibana.host=192.168.1.7:5601 -E output.elasticsearch.hosts=["192.168.1.7:9200"]
+
+	
+
 ==Desactivar hyper-v
 
 

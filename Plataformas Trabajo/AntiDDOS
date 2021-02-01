@@ -1,0 +1,80 @@
+###################################
+### Preguntas de introducción #####
+###################################
+
+
+Detecting         == Usar flujos y/o paquetes, parte del ANTIDDOS
+Management Center == Parte de AntiDDOS, puede ser distribuido (ATIC) Manage policies
+Collector         == Es parte del ATIC no antiDDOS
+Cleaning          == Parte de AntiDDOS, limpieza y reinyección de tráfico.
+
+
+
+#############
+#### MPU ####
+#############
+
+Main Processor Unit , usado por RIB (Routing Information Base)
+
+	- LPU == Line Processor Unit , usado para FIB (Forwarding Information Base backup from RIB)
+	- SPU == Aqui Cleaning Center (Service Processor Unit)
+
+
+
+
+############
+## Pasos ###
+############
+
+
+
+Detect --> ATIC --> Cleaning
+
+##############
+## CLeaning ##
+##############
+
+
+Usamos Traffic Diversion por :
+
+	- BGP = Dynamic (Temporal)
+	- PBR = Enrutamiento basado en politicas (Permanente)
+
+
+
+Path :
+
+	Router ---> Antiddos
+
+
+#######################
+###### Reinjection ####
+#######################
+
+Usamos Traffic Reinjection por :
+
+
+	- Static Route
+	- PBR Injection
+	- Layer 2 injection
+	- GRE Tunnel Injection
+
+
+
+Path :
+
+	Antiddos ---> Router
+
+
+
+##################
+## Laboratorio ###
+##################
+
+URL: http://elab.huawei.com
+
+LUIGI ABEL RAY RAYMUNDO CHAQUILA	luigi.raymundo@claro.com.pe	
+
+User: cgtcelab1898	
+Pass: elab#Krw5G7
+
