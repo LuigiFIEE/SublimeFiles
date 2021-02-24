@@ -1,0 +1,60 @@
+###########
+### IOT ###
+###########
+
+Vende vehiculos con LG Electronics ( eSIM)
+
+
+
+VOz y SMS 
+
+
+Telemetria APN1 - ONSTARsa ( VPN internacional ) usand DNS de GM
+
+Infotainment APN2 - Navegacion internet apn  GMSA y GMSAPP
+
+
+Entre SPFW03 y GGSN02
+
+
+
+GSM GPRS WCDMA LTE 
+
+eSIM de Gemalto == Thales 
+
+	-- Fabricados en brasil , perfil inicial es de brasil 72405xxxxxx
+	-- SWAP local MSISN  , IMSI
+
+Operador origen debe asegurar , Incident junior debe reviisarlo
+
+
+--- Backbone RMPLS Internacinal hacia GM
+
+
+Boton Azul para EU
+ RG 98
+
+ Boton Rojo tmb a GM
+
+ control RO para VOLT, aun no impkementado
+
+ APIS y SMS usa el Hub
+
+
+
+
+   <div style="margin-top: 24px; margin-bottom: 10px;">
+        <a class="me-email-headline" style="font-size: 18px;font-family:'Segoe UI Semibold','Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;text-decoration: underline;color: #6264a7;" href="https://teams.microsoft.com/l/meetup-join/19%3a2e2e59a291084a9ab1038e8760409807%40thread.tacv2/1613416009113?context=%7b%22Tid%22%3a%22ec6c0d0f-6a0c-40b0-abf2-af3160580c51%22%2c%22Oid%22%3a%223d89f359-b2b0-4ec8-9c88-6d6faed090fc%22%7d" target="_blank" rel="noreferrer noopener">Join Microsoft Teams Meeting</a>
+      </div>
+	 
+	 
+	  <a class="me-email-link" style="font-size: 12px;text-decoration: none;color: #6264a7;" target="_blank" href="https://aka.ms/JoinTeamsMeeting" rel="noreferrer noopener">Learn more about Teams</a>
+    
+     
+     
+      <div style="font-size: 14px; margin-bottom: 4px;">
+        
+      </div>
+      <div style="font-size: 12px;">
+      
+      </div>

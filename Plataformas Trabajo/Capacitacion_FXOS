@@ -1,0 +1,43 @@
+#############################
+##### Espacio disponible ####
+#############################
+
+connect local-mgmt
+	dir
+
+
+###################
+#### Uso de HW ####
+###################
+
+connect fxos
+	show system resources
+
+
+############################
+#### backup and restore ####
+############################
+
+copy startup-config running-config  // Aqui se "sobreescribe"
+
+//finalmente debemos reiniciar
+
+reload at 
+
+
+#########################
+###### Failolver ########
+#########################
+
+
+Se configura tanto LAN (Sourthbound - Inside ) y wan (Northbound - Outside)
+
+Tanto LAN como WAN comparten el mismo Rol (activo o standby)
+
+Finalmente definimos interface de "Keepalive"  e interface de "Link-state" (Es para copiar config)
+
+
+
+
+
+
