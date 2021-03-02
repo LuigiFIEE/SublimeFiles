@@ -1,0 +1,164 @@
+####################################
+##### How to use NetworkManager ####
+####################################
+
+
+1ro: Instalar Network Manager
+
+
+	yum install NetworkManager
+
+
+2do: Validar servicio
+
+	[root@rhel8master network-scripts]# systemctl status -l NetworkManager
+	● NetworkManager.service - Network Manager
+	   Loaded: loaded (/usr/lib/systemd/system/NetworkManager.service; enabled; vendor preset: enabled)
+	   Active: active (running) since Mon 2021-03-01 22:57:05 -05; 16min ago
+	     Docs: man:NetworkManager(8)
+	 Main PID: 804 (NetworkManager)
+	    Tasks: 3 (limit: 26213)
+	   Memory: 10.7M
+	   CGroup: /system.slice/NetworkManager.service
+	           └─804 /usr/sbin/NetworkManager --no-daemon
+
+	Mar 01 22:57:12 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657432.9758] device (enp0s3): state ch>
+	Mar 01 22:57:12 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657432.9980] device (enp0s3): state ch>
+	Mar 01 22:57:12 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657432.9986] device (enp0s3): state ch>
+	Mar 01 22:57:12 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657432.9988] device (enp0s3): state ch>
+	Mar 01 22:57:12 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657432.9997] manager: NetworkManager s>
+	Mar 01 22:57:13 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657433.0410] manager: NetworkManager s>
+	Mar 01 22:57:13 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657433.0411] policy: set 'enp0s3' (enp>
+	Mar 01 22:57:13 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657433.0476] device (enp0s3): Activati>
+	Mar 01 22:57:13 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657433.0481] manager: NetworkManager s>
+	Mar 01 22:57:13 rhel8master.labrhel.com NetworkManager[804]: <info>  [1614657433.0483] manager: startup complete
+
+
+
+############################
+#### Aplicando NMCLI #######
+############################
+
+nmcli device status
+[root@rhel8slave3 ~]# nmcli dev status
+DEVICE      TYPE      STATE      CONNECTION
+enp0s3      ethernet  connected  enp0s3
+enp0s8      ethernet  connected  Luigicon
+virbr0      bridge    connected  virbr0
+lo          loopback  unmanaged  --
+
+> nmcli connection show
+
+[root@rhel8slave3 ~]# nmcli connection show
+NAME      UUID                                  TYPE      DEVICE
+enp0s3    85726e6e-530c-4e5f-97ff-b34d20d81c05  ethernet  enp0s3
+Luigicon  ba8aa3eb-16ff-4511-82b2-ecfb990dc44b  ethernet  enp0s8
+virbr0    52582b0a-8a1f-48d0-bebd-6baf94b43e7c  bridge    virbr0
+
+
+> Crear una nueva conexión
+
+nmcli 
+
+
+> Validar metodo de conección [nmcli connection show NAME_CONNECTION]
+
+[root@rhel8slave3 ~]# nmcli connection show Luigicon
+connection.id:                          Luigicon
+connection.uuid:                        ba8aa3eb-16ff-4511-82b2-ecfb990dc44b
+connection.stable-id:                   --
+connection.type:                        802-3-ethernet
+connection.interface-name:              enp0s8
+connection.autoconnect:                 yes
+connection.autoconnect-priority:        0
+connection.autoconnect-retries:         -1 (default)
+connection.multi-connect:               0 (default)
+connection.auth-retries:                -1
+connection.timestamp:                   1581005320
+connection.read-only:                   no
+connection.permissions:                 --
+connection.zone:                        --
+connection.master:                      --
+connection.slave-type:                  --
+
+
+- Desconectar una interface
+
+	nmcli device disconnect enp0s8
+	nmcli connection down Luigicon
+
+
+- Conectar una interface 
+
+	nmcli device disconnect enp0s8
+	nmcli connection up Luigicon
+
+
+[root@rhel8slave3 ~]# nmcli connection show
+NAME      UUID                                  TYPE      DEVICE
+enp0s3    85726e6e-530c-4e5f-97ff-b34d20d81c05  ethernet  enp0s3
+virbr0    52582b0a-8a1f-48d0-bebd-6baf94b43e7c  bridge    virbr0
+Luigicon  ba8aa3eb-16ff-4511-82b2-ecfb990dc44b  ethernet  --
+
+
+
+[root@rhel8slave3 ~]# nmcli connection show --active
+NAME    UUID                                  TYPE      DEVICE
+enp0s3  85726e6e-530c-4e5f-97ff-b34d20d81c05  ethernet  enp0s3
+virbr0  52582b0a-8a1f-48d0-bebd-6baf94b43e7c  bridge    virbr0
+
+
+- Eliminar conexión
+
+
+nmcli  connection delete Luigicon
+
+
+
+- Asegurarse de activar autoconectar
+
+[root@rhel8slave3 ~]# nmcli connection show Luigicon
+connection.id:                          Luigicon
+connection.uuid:                        ba8aa3eb-16ff-4511-82b2-ecfb990dc44b
+connection.stable-id:                   --
+connection.type:                        802-3-ethernet
+connection.interface-name:              enp0s8
+connection.autoconnect:                 yes
+connection.autoconnect-priority:        0
+
+
+
+## Archivos de configuracion
+
+
+/etc/sysconfig/Network-scripts/
+
+
+IPADDR=10.200.1.28
+PREFIX=24
+GATEWAY=10.200.1.1
+DNS1=10.200.1.25
+BOOTPROTO=none			//Manual configuration
+
+
+## Configuración en mayuscula es temporal
+
+nmcli conn show Luigicon 
+
+
+## Configurar amigablemente
+
+
+nmcli conn edit Luigicon
+
+
+
+############################
+#### Para agarrar cambios ###
+############################
+
+
+A fin de que los cambios surtan efectos, realizar un "Reaload" del "connection"
+
+
+	nmcli connection reload Connection_name
