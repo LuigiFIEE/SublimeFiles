@@ -1,0 +1,80 @@
+version: "3.7"
+
+services:       # Is a Dictionary with other dictionary
+
+  wordpress:    # Dictionary
+    image: wordpress:php7.1-apache        # Dictionary with a value "string"
+    ports:
+      - 8080:80                           # Dictionary with a list
+    environment:
+      WORDPRESS_DB_HOST: mysql            # Dictionary with a only "string"
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: root
+      WORDPRESS_DB_NAME: wordpress
+    links:
+      - mysql:mysql
+
+
+  mysql:
+    image: mysql:8.0.13
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ~/docker/mysql-data:/var/lib/mysql
+
+
+version: "3.7"
+
+services:
+
+  elasticLuigi2:
+    image: elasticsearch:7.12.1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      discovery.type: single-node
+
+  kibanaLuigi2:
+    image: kibana:7.12.1
+    port:
+      - 5601:5601
+
+    links:
+      - elasticLuigi2:elasticsearch
+
+
+
+
+## as python format
+[ 
+  {"Martin":
+    {"name": "Martin Developer",
+      "job": "Developer",
+      "Skills": ["Python","Perl","Pascal"]
+    }
+  },
+
+  {"tabitha": 
+    {"name": "Tabitha Butumen",
+      "job": "Developer",
+      "Skills": ["Lisp","Fortran","Erlang"]
+    }
+  }
+]
+
+## as YAML format
+- Martin:
+    name: Martin Developer
+    job: Developer
+    Skills:
+      - Python
+      - Perl
+      - Pascal
+
+- Tabitha:
+    name: |
+      Aea ctm
+      que vas hacer cagada

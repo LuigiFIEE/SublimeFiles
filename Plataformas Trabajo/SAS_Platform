@@ -1,0 +1,25 @@
+
+Soporte para Playbook Ansible
+
+
+Servidor CAS , nativo SAS Vaya.
+
+	Previo a SAS Vaya es SAS 9
+
+
+Autenticación por LDAP
+
+
+Controller (primario, secundario) distribuye la carga de trabajo entre cada Core 
+
+
+Carga en paralelo es MPP 
+
+
+proc setinit; run;
+
+
+
+### Microservicios ####
+
+

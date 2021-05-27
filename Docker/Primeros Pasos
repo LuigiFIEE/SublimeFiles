@@ -39,7 +39,7 @@ Esto asegura la compatibilidad de cada "micro-servicio" en cualquier SO que sopo
 
 
 
-== Ingresando al prompt de un contener
+== Ingresando al prompt de un conteiner
 
 	docker exec -it LuigiSQL bash
 
