@@ -25,6 +25,16 @@
 We need a  basic knowledged  in 'playbooks' and 'modules'
 
 
+
+########################
+#### Ansible Modules ###
+########################
+
+
+ansible-doc --list 
+
+	
+
 ###############################
 ##### Ansible Playbooks #######
 ###############################
