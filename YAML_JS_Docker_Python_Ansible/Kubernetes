@@ -1,5 +1,30 @@
 ## Kubernetes introduction ##
 
+Its a containers orchestation
+
+
+-- Components:
+
+ * Master Server:
+
+ 	API Server 
+ 	Controller Manager (create PODs)
+ 	Schudeler
+
+ Database is ETCD for Master Server
+
+ *	Worker:
+
+ Server que tiene kubelet 
+ Dentro hay un POD
+
+ *	Services:
+ 	Load Balancer
+
+
+
+
+
 -- See all PODs with process
 
 	kubctl get all 

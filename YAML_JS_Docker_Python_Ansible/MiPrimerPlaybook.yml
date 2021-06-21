@@ -1,0 +1,34 @@
+- name: Mi primer playbook perro                ## Its a list
+  connection: ansible.netcommon.network_cli     ## a Dictionary
+  hosts: Internet1
+  gather_facts: no
+  tasks:                                         ## Dictionary 
+    - name: run show version on remote devices
+      cisco.ios.ios_command:
+        commands: show version
+      register: output
+
+    - name: Imprimir mrd
+      debug:
+        var: output.stdout_lines
+
+
+
+# [ 
+
+
+# {
+#   name='Mi Primer playbook perro',
+#   connection='ansible.netcommon.network_cli',
+#   hosts ='Internet1',
+#   task=[
+#           { name='run show version on remote devices',
+#             cisco.ios.ios_command= {
+#                                     commands='show version'
+#                                     }
+#           }
+#         ]
+# }
+
+
+# ]

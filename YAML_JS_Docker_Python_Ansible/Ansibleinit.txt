@@ -1,0 +1,30 @@
+###############################
+##### Ansible Introduction ####
+###############################
+
+= Execute a 'module':
+
+	ansible all -m ping
+
+= Exceute a 'module' user:
+
+	ansible NetworkDev -m user -a "name=ansibletest state=presente"
+
+= Validating  ansible version:
+
+	ansible --version
+
+= List Hosts
+
+	ansible NetworkDev --list-hosts 
+
+= Execute a module with sudoers
+
+	ansible all -a 'hostname' --become
+
+We need a  basic knowledged  in 'playbooks' and 'modules'
+
+
+###############################
+##### Ansible Playbooks #######
+###############################
