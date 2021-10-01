@@ -1,6 +1,16 @@
+##################
 
-
-ip domina-name luiginet.com
+ip domain-name luiginet.com
 
 crypto key generate rsa modules 1024
 
+ip ssh version 2
+
+username LuigiFIEE password FIEEyeah!1
+
+enable secret FIEEyeah!1
+
+
+line vty 0 4
+login local
+transport input ssh
