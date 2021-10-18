@@ -1,0 +1,15 @@
+##########################
+## What is a Dockerfile ##
+##########################
+
+A dockerFile contains a images base to make a Image customised.
+
+
+
+
+FROM luigifiee/luigisql
+ENV mysql_password=FIEEyeah!1
+COPY /home/LuigiFIEE/LuigiSQL /var/lib/mysql/
+RUN echo 'we hare running'
+
+
