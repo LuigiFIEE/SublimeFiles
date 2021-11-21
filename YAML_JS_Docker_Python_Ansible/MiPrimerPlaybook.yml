@@ -1,11 +1,15 @@
 - name: Mi primer playbook perro                ## Its a list
   connection: ansible.netcommon.network_cli     ## a Dictionary
-  hosts: Internet1
+  hosts: routers
   gather_facts: no
   tasks:                                         ## Dictionary 
     - name: run show version on remote devices
       cisco.ios.ios_command:
-        commands: show version
+        commands:
+          - show ip interface brief | ex unas
+          - show version | inc uptime
+  #        - show version | inc uptime
+  #        - show ip ospf neigh
       register: output
 
     - name: Imprimir mrd
