@@ -3,7 +3,7 @@
   hosts: routers
   gather_facts: no
   tasks:                                         ## Dictionary 
-    - name: run show version on remote devices
+    - name: Running remote commands to my NE
       cisco.ios.ios_command:
         commands:
           - show ip interface brief | ex unas
@@ -12,7 +12,7 @@
   #        - show ip ospf neigh
       register: output
 
-    - name: Imprimir mrd
+    - name: Print output
       debug:
         var: output.stdout_lines
 
