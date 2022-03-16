@@ -1,0 +1,689 @@
+SW01_CAC_LARCO#show running-config
+Building configuration...
+
+Current configuration : 19176 bytes
+!
+! Last configuration change at 17:02:40 PERU Thu Jan 13 2022 by C25241
+! NVRAM config last updated at 06:59:15 PERU Thu Nov 18 2021 by C18950
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec localtime show-timezone
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+!
+hostname SW01_CAC_LARCO
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 32000
+enable secret 5 $1$BiEx$PABlYmtw2EZRJMzgs0ved/
+enable password 7 110A1016141D
+!
+username backup privilege 15 password 7 095C450A1B0B1602
+username wrfield privilege 15 password 7 1511070D16257A767B
+aaa new-model
+!
+!
+aaa authentication login default group tacacs+ local-case
+aaa authentication enable default group tacacs+ enable
+aaa authentication ppp default local-case
+aaa authorization exec default group tacacs+ local
+aaa authorization commands 15 default group tacacs+ local
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands 0 default start-stop group tacacs+
+aaa accounting commands 15 default start-stop group tacacs+
+aaa accounting system default start-stop group tacacs+
+!
+!
+!
+aaa session-id common
+clock timezone PERU -5
+system mtu routing 1500
+vtp mode transparent
+ip subnet-zero
+no ip domain-lookup
+!
+!
+!
+mls qos map cos-dscp 0 8 16 24 32 46 48 56
+mls qos srr-queue input bandwidth 90 10
+mls qos srr-queue input threshold 1 8 16
+mls qos srr-queue input threshold 2 34 66
+mls qos srr-queue input buffers 67 33
+mls qos srr-queue input cos-map queue 1 threshold 2 1
+mls qos srr-queue input cos-map queue 1 threshold 3 0
+mls qos srr-queue input cos-map queue 2 threshold 1 2
+mls qos srr-queue input cos-map queue 2 threshold 2 4 6 7
+mls qos srr-queue input cos-map queue 2 threshold 3 3 5
+mls qos srr-queue input dscp-map queue 1 threshold 2 9 10 11 12 13 14 15
+mls qos srr-queue input dscp-map queue 1 threshold 3 0 1 2 3 4 5 6 7
+mls qos srr-queue input dscp-map queue 1 threshold 3 32
+mls qos srr-queue input dscp-map queue 2 threshold 1 16 17 18 19 20 21 22 23
+mls qos srr-queue input dscp-map queue 2 threshold 2 33 34 35 36 37 38 39 48
+mls qos srr-queue input dscp-map queue 2 threshold 2 49 50 51 52 53 54 55 56
+mls qos srr-queue input dscp-map queue 2 threshold 2 57 58 59 60 61 62 63
+mls qos srr-queue input dscp-map queue 2 threshold 3 24 25 26 27 28 29 30 31
+mls qos srr-queue input dscp-map queue 2 threshold 3 40 41 42 43 44 45 46 47
+mls qos srr-queue output cos-map queue 1 threshold 3 5
+mls qos srr-queue output cos-map queue 2 threshold 3 3 6 7
+mls qos srr-queue output cos-map queue 3 threshold 3 2 4
+mls qos srr-queue output cos-map queue 4 threshold 2 1
+mls qos srr-queue output cos-map queue 4 threshold 3 0
+mls qos srr-queue output dscp-map queue 1 threshold 3 40 41 42 43 44 45 46 47
+mls qos srr-queue output dscp-map queue 2 threshold 3 24 25 26 27 28 29 30 31
+mls qos srr-queue output dscp-map queue 2 threshold 3 48 49 50 51 52 53 54 55
+mls qos srr-queue output dscp-map queue 2 threshold 3 56 57 58 59 60 61 62 63
+mls qos srr-queue output dscp-map queue 3 threshold 3 16 17 18 19 20 21 22 23
+mls qos srr-queue output dscp-map queue 3 threshold 3 32 33 34 35 36 37 38 39
+mls qos srr-queue output dscp-map queue 4 threshold 1 8
+mls qos srr-queue output dscp-map queue 4 threshold 2 9 10 11 12 13 14 15
+mls qos srr-queue output dscp-map queue 4 threshold 3 0 1 2 3 4 5 6 7
+mls qos queue-set output 1 threshold 1 138 138 92 138
+mls qos queue-set output 1 threshold 2 138 138 92 400
+mls qos queue-set output 1 threshold 3 36 77 100 318
+mls qos queue-set output 1 threshold 4 20 50 67 400
+mls qos queue-set output 2 threshold 1 149 149 100 149
+mls qos queue-set output 2 threshold 2 118 118 100 235
+mls qos queue-set output 2 threshold 3 41 68 100 272
+mls qos queue-set output 2 threshold 4 42 72 100 242
+mls qos queue-set output 1 buffers 10 10 26 54
+mls qos queue-set output 2 buffers 16 6 17 61
+mls qos
+!
+crypto pki trustpoint TP-self-signed-1538248576
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1538248576
+ revocation-check none
+ rsakeypair TP-self-signed-1538248576
+!
+!
+crypto pki certificate chain TP-self-signed-1538248576
+ certificate self-signed 01
+  30820247 308201B0 A0030201 02020101 300D0609 2A864886 F70D0101 04050030
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 31353338 32343835 3736301E 170D3933 30333031 30303031
+  30345A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D31 35333832
+  34383537 3630819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281
+  8100D944 B2283AF1 8DB0451D 7A3DF400 D0DF0153 9E479246 06015A88 AE58AF9E
+  1C8C90AD 7688BEFD A1A0668F ACF2CDA4 13CD48E0 0ADE48AA BE604DF3 E1474E82
+  463E5320 6275EA44 D77FE69C 98079838 6F836772 9202D5EB 49B3C1CF E51432C6
+  C074965C A0475394 962D3D22 25C629E7 66E1A4A1 CEAF1C40 A9DD9497 AE1E9909
+  3FC50203 010001A3 6F306D30 0F060355 1D130101 FF040530 030101FF 301A0603
+  551D1104 13301182 0F535730 315F4341 435F4C41 52434F2E 301F0603 551D2304
+  18301680 147B5C04 73C7C35E 09054087 122893B8 E6F3C991 63301D06 03551D0E
+  04160414 7B5C0473 C7C35E09 05408712 2893B8E6 F3C99163 300D0609 2A864886
+  F70D0101 04050003 818100C6 447673AD 499DD39F 9A69E7AA 01A415AB FED164D5
+  418F8BC1 FBE12522 A0285CB0 6C215E8A 2EB982A4 F0A6E842 9E4281D4 17ED8802
+  2E363C33 D3BB89D1 BDA99106 6FD8F62E CB6A1015 9C8B1C1D 4233BC92 DEFF48BA
+  14E53ED0 DD7D9248 39D3AE4C AD33C21E 0855D1EB 35A9A762 65E67949 A619922A
+  78788CBF 50DCE366 27AE73
+  quit
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+vlan 6
+ name test
+!
+vlan 10
+ name LAN_Datos
+!
+vlan 50
+ name ATM_KREATECK
+!
+vlan 301
+ name ALTEXTER
+!
+vlan 1020
+ name SSID-WFCLARO
+!
+vlan 1021
+ name SSID-WFCITRIX
+!
+vlan 1023
+ name SSID-GestionAps
+lldp run
+!
+!
+class-map match-all voice-cisco
+ match access-group name voice-rtp-cisco
+class-map match-all voice-control
+ match access-group name voice-control
+!
+!
+policy-map marking-ciscophone
+ class voice-cisco
+  set dscp ef
+ class voice-control
+  set dscp af31
+!
+!
+!
+!
+interface FastEthernet0/1
+ description ++ Router ++
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,50,1020,1021,1023
+ switchport mode trunk
+ speed 100
+ duplex full
+ srr-queue bandwidth share 10 10 60 20
+ srr-queue bandwidth shape 10 0 0 0
+ priority-queue out
+ mls qos trust cos
+ auto qos voip trust
+!
+interface FastEthernet0/2
+ description ++ LINK_TO_SW02_CASCADA ++
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,50,1020,1021,1023
+ switchport mode trunk
+ speed 100
+ duplex full
+!
+interface FastEthernet0/3
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10,50,1020,1021,1023
+ switchport mode trunk
+ switchport nonegotiate
+ speed 100
+ duplex full
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/4
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/5
+ switchport access vlan 10
+ switchport mode access
+ load-interval 30
+ storm-control broadcast level 0.01
+ spanning-tree portfast
+ spanning-tree guard root
+!
+interface FastEthernet0/6
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/7
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/8
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/9
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/10
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/11
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/12
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/13
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/14
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/15
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/16
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/17
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/18
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/19
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/20
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/21
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/22
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/23
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/24
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/25
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/26
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/27
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/28
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/29
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/30
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/31
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/32
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/33
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/34
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/35
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/36
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/37
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/38
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/39
+ description ++ Pcs ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/40
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/41
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/42
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/43
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/44
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/45
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/46
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/47
+ description ++ Telefonia IP ++
+ switchport access vlan 10
+ switchport mode access
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ service-policy input marking-ciscophone
+!
+interface FastEthernet0/48
+ description LINK TO SW-LOGICALIS
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 1020,1021,1023
+ switchport mode trunk
+ mls qos trust cos
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+ description LINK TO SW-LOGICALIS
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 1020,1021,1023
+ switchport mode trunk
+ mls qos trust cos
+ spanning-tree portfast
+!
+interface GigabitEthernet0/4
+!
+interface Vlan1
+ ip address 172.22.68.5 255.255.255.0
+ shutdown
+!
+interface Vlan6
+ ip address 6.6.6.2 255.255.255.252
+!
+interface Vlan10
+ ip address 172.22.68.5 255.255.255.0
+!
+ip default-gateway 172.22.68.254
+ip classless
+no ip http server
+no ip http secure-server
+!
+!
+ip access-list extended voice-rtp-cisco
+ permit udp any any range 16384 32767
+!
+logging 172.19.216.51
+!
+snmp-server community netadmro RO
+snmp-server community TIM-RO RO
+snmp-server system-shutdown
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps tty
+snmp-server enable traps config
+snmp-server host 172.19.1.238 TIM-RO
+snmp-server host 172.19.1.239 TIM-RO
+snmp-server host 172.19.110.168 version 2c netadmro
+snmp-server host 172.19.154.28 version 2c netadmro
+snmp-server host 172.19.155.109 version 2c netadmro
+snmp-server host 172.19.155.149 version 2c netadmro
+snmp-server host 172.19.212.34 version 2c netadmro
+snmp-server host 172.19.216.29 version 2c netadmro
+snmp-server host 172.19.216.30 version 2c netadmro
+tacacs-server host 172.19.216.49
+tacacs-server host 172.19.216.44
+tacacs-server directed-request
+tacacs-server key 7 14141B180F0B272A2A
+!
+control-plane
+!
+banner motd ^C
+****************************************************
+                       SWITCH
+                    CAC LARCO 02
+              AMERICA MOVIL - CLARO PERU
+ Esta ingresando a un sistema seguro y monitoreado
+  Esta informacion es estrictamente confidencial
+ y de propiedad de America Movil - RED CORPORATIVA
+****************************************************^C
+!
+line con 0
+ password 7 13064601085C0A7B3B
+line vty 0 4
+ password 7 13064601085C0A7B3B
+ length 0
+ transport input ssh
+line vty 5 15
+ transport input ssh
+!
+ntp clock-period 36029088
+ntp server 172.19.72.24
+end
+
+SW01_CAC_LARCO#$
+SW01_CAC_LARCO#

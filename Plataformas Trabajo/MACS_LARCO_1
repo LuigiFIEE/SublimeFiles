@@ -1,0 +1,40 @@
+SW01_CAC_LARCO#show mac address-table
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  10    0000.5e00.0105    DYNAMIC     Fa0/1
+  10    0003.4f03.bd59    DYNAMIC     Fa0/47
+  10    0027.0e3d.22fa    DYNAMIC     Fa0/44
+  10    1860.2422.90ed    DYNAMIC     Fa0/32
+  10    4437.e6e2.961c    DYNAMIC     Fa0/46
+  10    6400.f1ab.2708    DYNAMIC     Fa0/18
+  10    6c4b.903c.7bbf    DYNAMIC     Fa0/7
+  10    8c42.6d27.2a96    DYNAMIC     Fa0/1
+  10    98fa.9b65.b32e    DYNAMIC     Fa0/12
+  10    98fa.9b65.b5e8    DYNAMIC     Fa0/8
+  10    98fa.9b65.b958    DYNAMIC     Fa0/17
+  10    98fa.9b65.bfa3    DYNAMIC     Fa0/10
+  10    98fa.9b65.d927    DYNAMIC     Fa0/30
+  10    98fa.9b65.e7bb    DYNAMIC     Fa0/29
+  10    98fa.9b67.38e0    DYNAMIC     Fa0/38
+  10    98fa.9b69.1f9c    DYNAMIC     Fa0/28
+  10    ace2.d3d7.b33f    DYNAMIC     Fa0/15
+  10    ace2.d3db.a17c    DYNAMIC     Fa0/36
+  50    0000.5e00.011e    DYNAMIC     Fa0/1
+  50    8c42.6d27.2a96    DYNAMIC     Fa0/1
+1020    0000.5e00.010a    DYNAMIC     Fa0/1
+1020    00c1.b151.9c98    DYNAMIC     Fa0/48
+1021    0000.5e00.010f    DYNAMIC     Fa0/1
+1021    00c1.b151.9c98    DYNAMIC     Fa0/48
+1023    0000.5e00.0114    DYNAMIC     Fa0/1
+1023    00c1.b151.9c98    DYNAMIC     Fa0/48
+1023    00c1.b151.9cc1    DYNAMIC     Fa0/48
+1023    8c42.6d27.2a96    DYNAMIC     Fa0/1
+1023    c4b9.cde8.1960    DYNAMIC     Fa0/48
+1023    c4b9.cde8.1c80    DYNAMIC     Fa0/48
+Total Mac Addresses for this criterion: 78
+
+
+

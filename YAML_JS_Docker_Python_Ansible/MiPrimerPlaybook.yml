@@ -6,13 +6,13 @@
     - name: Running remote commands to my NE
       cisco.ios.ios_command:
         commands:
-          - show ip interface brief | ex unas
+#          - show ip interface brief | ex unas
           - show version | inc uptime
-  #        - show version | inc uptime
+#          - show running-config
   #        - show ip ospf neigh
       register: output
 
-    - name: Print output
+    - name: Print dog hector gil
       debug:
         var: output.stdout_lines
 
