@@ -7,7 +7,7 @@
       cisco.ios.ios_command:
         commands:
 #          - show ip interface brief | ex unas
-          - show version | inc uptime
+          - show ip interface brief
 #          - show running-config
   #        - show ip ospf neigh
       register: output

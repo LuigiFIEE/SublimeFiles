@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   elasticLuigi2:
-    image: elasticsearch:7.12.1
+    image: elasticsearch:7.14.1
     ports:
       - 9200:9200
       - 9300:9300
@@ -11,9 +11,12 @@ services:
       discovery.type: single-node
 
   kibanaLuigi2:
-    image: kibana:7.12.1
+    image: kibana:7.14.1
     port:
       - 5601:5601
 
     links:
       - elasticLuigi2:elasticsearch
+    networks:
+      - 
+      

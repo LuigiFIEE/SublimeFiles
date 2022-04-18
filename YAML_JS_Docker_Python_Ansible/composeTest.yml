@@ -48,33 +48,33 @@ services:
 
 
 
-## as python format
-[ 
-  {"Martin":
-    {"name": "Martin Developer",
-      "job": "Developer",
-      "Skills": ["Python","Perl","Pascal"]
-    }
-  },
+# ## as python format
+# [ 
+#   {"Martin":
+#     {"name": "Martin Developer",
+#       "job": "Developer",
+#       "Skills": ["Python","Perl","Pascal"]
+#     }
+#   },
 
-  {"tabitha": 
-    {"name": "Tabitha Butumen",
-      "job": "Developer",
-      "Skills": ["Lisp","Fortran","Erlang"]
-    }
-  }
-]
+#   {"tabitha": 
+#     {"name": "Tabitha Butumen",
+#       "job": "Developer",
+#       "Skills": ["Lisp","Fortran","Erlang"]
+#     }
+#   }
+# ]
 
-## as YAML format
-- Martin:
-    name: Martin Developer
-    job: Developer
-    Skills:
-      - Python
-      - Perl
-      - Pascal
+# ## as YAML format
+# - Martin:
+#     name: Martin Developer
+#     job: Developer
+#     Skills:
+#       - Python
+#       - Perl
+#       - Pascal
 
-- Tabitha:
-    name: |
-      Aea ctm
-      que vas hacer cagada
+# - Tabitha:
+#     name: |
+#       Aea ctm
+#       que vas hacer cagada
