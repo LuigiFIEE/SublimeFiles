@@ -9,14 +9,31 @@ services:
       - 9300:9300
     environment:
       discovery.type: single-node
+    networks:
+      elk:
+        ipv4_address: 192.168.122.25
 
   kibanaLuigi2:
     image: kibana:7.14.1
-    port:
+    ports:
       - 5601:5601
 
     links:
       - elasticLuigi2:elasticsearch
+
     networks:
-      - 
-      
+      elk:
+        ipv4_address: 192.168.122.26
+
+
+networks:
+    elk:
+      name: elk
+      driver: macvlan
+      driver_opts:
+        parent: virbr0
+      ipam:
+        driver: default
+        config:
+          - subnet: 192.168.122.0/24
+            gateway: 192.168.122.1
