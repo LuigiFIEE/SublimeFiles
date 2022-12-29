@@ -9,9 +9,13 @@ services:
       - 9300:9300
     environment:
       discovery.type: single-node
+    deploy:
+      resources:
+        limits:
+          memory: 4G
     networks:
       elk:
-        ipv4_address: 192.168.122.25
+        ipv4_address: 192.168.1.25
 
   kibanaLuigi2:
     image: kibana:7.14.1
@@ -23,17 +27,34 @@ services:
 
     networks:
       elk:
-        ipv4_address: 192.168.122.26
+        ipv4_address: 192.168.1.26
 
+  filebeatLuigi2:
+    image: elastic/filebeat:7.14.1
+    command: -e --strict.perms=false
+    user: root
+    environment:
+      setup.kibana.host: "192.168.1.26:5601"
+      output.elasticsearch.hosts: "192.168.1.25:9200"
+      path.config: "/usr/share/filebeat"
+    volumes:
+      - /home/LuigiFIEE/Documentos/SublimeFiles/YAML_JS_Docker_Python_Ansible/netflowconfig.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      elk:
+        ipv4_address: 192.168.1.24
 
 networks:
     elk:
       name: elk
       driver: macvlan
       driver_opts:
-        parent: virbr0
+        parent: enp4s0f4u1u4
+#        com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+#        com.docker.network.bridge.name: virbr0
       ipam:
         driver: default
         config:
-          - subnet: 192.168.122.0/24
-            gateway: 192.168.122.1
+          - subnet: 192.168.1.0/24
+            gateway: 192.168.1.1
